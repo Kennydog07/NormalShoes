@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enquire — Normal Shoes</title>
+  <meta name="description" content="Get in touch with Normal Shoes about mastering and packaging your finished film to Blu-ray." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a href="index.html" class="logo">Normal <span class="mirror">Shoes</span></a>
+      <nav class="main-nav" aria-label="Primary">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="enquire.html">Enquire</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="wrap">
+        <p class="eyebrow">Get In Touch</p>
+        <h1>Enquire</h1>
+        <p class="lede">
+          Tell us a little about your film and what you're after, and
+          we'll get back to you within two working days.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <form id="enquiry-form" class="form-grid" novalidate>
+          <div class="field">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" required />
+          </div>
+          <div class="field">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" required />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="field">
+            <label for="institution">Institution / Course (optional)</label>
+            <input type="text" id="institution" name="institution" />
+          </div>
+          <div class="field full">
+            <label for="role">I am a...</label>
+            <select id="role" name="role">
+              <option value="">Select one</option>
+              <option value="Student">Student</option>
+              <option value="Tutor">Tutor</option>
+              <option value="Course Coordinator">Course Coordinator</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="message">Tell us about your film</label>
+            <textarea id="message" name="message" placeholder="Runtime, format, number of films, deadline — whatever's useful." required></textarea>
+          </div>
+          <div class="field full">
+            <button type="submit" class="btn btn-primary">Send Enquiry</button>
+          </div>
+        </form>
+
+        <p class="form-note">
+          Submitting this form opens your email client with the details
+          filled in, addressed to hello@normalshoes.co.uk — just hit send
+          from there.
+        </p>
+
+        <div id="form-success" class="form-success">
+          Your email client should now be open with your enquiry ready to
+          send. If nothing happened, email us directly at
+          <a href="mailto:hello@normalshoes.co.uk" style="text-decoration:underline;">hello@normalshoes.co.uk</a>.
+        </div>
+
+        <div class="contact-strip">
+          <div class="item">
+            <div class="label">Email</div>
+            <div class="value"><a href="mailto:hello@normalshoes.co.uk">hello@normalshoes.co.uk</a></div>
+          </div>
+          <div class="item">
+            <div class="label">Response Time</div>
+            <div class="value">Within 2 working days</div>
+          </div>
+          <div class="item">
+            <div class="label">Based In</div>
+            <div class="value">United Kingdom</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-logo">Normal <span class="mirror" style="display:inline-block; transform:scaleX(-1);">Shoes</span></div>
+      <ul class="foot-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="enquire.html">Enquire</a></li>
+        <li><a href="mailto:hello@normalshoes.co.uk">hello@normalshoes.co.uk</a></li>
+      </ul>
+      <p class="copyright">&copy; 2026 Normal Shoes. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
