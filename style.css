@@ -510,6 +510,36 @@ section { padding: clamp(3.5rem, 8vh, 6rem) 0; }
   padding: 2rem;
 }
 
+.split .panel-image {
+  margin: 0;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.split .panel-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.split .panel-image figcaption {
+  position: absolute;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  background: rgba(17, 17, 17, 0.82);
+  color: var(--paper);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.6rem 0.9rem;
+}
+
+.split .panel-image {
+  position: relative;
+}
+
 .page-hero {
   padding: clamp(3.5rem, 10vh, 6rem) 0 clamp(2.5rem, 6vh, 4rem);
   border-bottom: 1px solid var(--line);
