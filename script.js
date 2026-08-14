@@ -1,7 +1,7 @@
 // Normal Shoes — shared site behaviour
-
+ 
 const THEME_KEY = "normal-shoes-theme";
-
+ 
 document.addEventListener("DOMContentLoaded", () => {
   // Light / dark theme toggle. The initial theme is already applied by the
   // inline script in <head> (to avoid a flash of the wrong theme) — this
@@ -13,9 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
       themeToggle.setAttribute("aria-label", `Switch to ${next} theme`);
       themeToggle.setAttribute("aria-pressed", String(theme === "dark"));
     };
-
+ 
     applyLabel(document.documentElement.getAttribute("data-theme") || "light");
-
+ 
     themeToggle.addEventListener("click", () => {
       const current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
       const next = current === "dark" ? "light" : "dark";
@@ -28,23 +28,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
+ 
   // Keep every open tab in sync if the theme is changed elsewhere
   window.addEventListener("storage", (e) => {
     if (e.key === THEME_KEY && (e.newValue === "dark" || e.newValue === "light")) {
       document.documentElement.setAttribute("data-theme", e.newValue);
     }
   });
-
+ 
   const toggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector(".main-nav");
-
+ 
   if (toggle && nav) {
     toggle.addEventListener("click", () => {
       const isOpen = nav.classList.toggle("is-open");
       toggle.setAttribute("aria-expanded", String(isOpen));
     });
-
+ 
     nav.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => {
         nav.classList.remove("is-open");
@@ -52,13 +52,13 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
-
+ 
   // Enquiry form -> mailto handoff
   const form = document.querySelector("#enquiry-form");
   if (form) {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-
+ 
       const data = new FormData(form);
       const firstName = (data.get("firstName") || "").toString().trim();
       const lastName = (data.get("lastName") || "").toString().trim();
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const institution = (data.get("institution") || "").toString().trim();
       const role = (data.get("role") || "").toString().trim();
       const message = (data.get("message") || "").toString().trim();
-
+ 
       const subject = `Enquiry from ${firstName} ${lastName}`.trim();
       const bodyLines = [
         `Name: ${firstName} ${lastName}`.trim(),
@@ -77,21 +77,21 @@ document.addEventListener("DOMContentLoaded", () => {
         "Message:",
         message,
       ].filter((line) => line !== null);
-
+ 
       const mailto =
-        "mailto:hello@normalshoes.co.uk" +
+        "mailto:normalshoes@gmail.com" +
         `?subject=${encodeURIComponent(subject)}` +
         `&body=${encodeURIComponent(bodyLines.join("\n"))}`;
-
+ 
       window.location.href = mailto;
-
+ 
       const success = document.querySelector("#form-success");
       if (success) {
         success.classList.add("is-visible");
       }
     });
   }
-
+ 
   // Mark active nav link
   const path = window.location.pathname.split("/").pop() || "index.html";
   document.querySelectorAll(".main-nav a").forEach((link) => {
@@ -101,3 +101,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+ 
