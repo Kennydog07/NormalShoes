@@ -114,6 +114,29 @@ a { color: inherit; text-decoration: none; }
   transform: scaleX(-1);
 }
 
+/* ---- Logo mark (image badge, swaps with theme) ------------------------- */
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo-mark img {
+  display: block;
+  height: 44px;
+  width: 44px;
+}
+
+.logo-mark .logo-ondark { display: none; }
+
+:root[data-theme="dark"] .logo-mark .logo-onlight { display: none; }
+:root[data-theme="dark"] .logo-mark .logo-ondark { display: block; }
+
+.foot-logo.logo-mark img {
+  height: 34px;
+  width: 34px;
+}
+
 .main-nav ul {
   list-style: none;
   display: flex;
