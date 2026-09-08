@@ -102,3 +102,40 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
  
+
+// Festival DVD sign-up forms -> mailto handoff
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("form[data-signup]").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const recipient = form.dataset.signup || "normalshoes@gmail.com";
+      const festival = form.dataset.festival || "Normal Shoes";
+      const data = new FormData(form);
+
+      const lines = [];
+      form.querySelectorAll("[name]").forEach((field) => {
+        const value = (data.get(field.name) || "").toString().trim();
+        if (!value) return;
+        const label = form.querySelector(`label[for="${field.id}"]`);
+        const labelText = label ? label.textContent.trim() : field.name;
+        lines.push(`${labelText}: ${value}`);
+      });
+
+      const filmTitle = (data.get("filmTitle") || "").toString().trim();
+      const subject = `${festival} Collection Submission${filmTitle ? " — " + filmTitle : ""}`;
+
+      const mailto =
+        `mailto:${recipient}` +
+        `?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(lines.join("\n"))}`;
+
+      window.location.href = mailto;
+
+      const success = document.querySelector(`#${form.id}-success`);
+      if (success) {
+        success.classList.add("is-visible");
+      }
+    });
+  });
+});

@@ -114,27 +114,60 @@ a { color: inherit; text-decoration: none; }
   transform: scaleX(-1);
 }
 
-/* ---- Logo mark (image badge, swaps with theme) ------------------------- */
+/* ---- Logo mark (spinning image badge) ---------------------------------- */
 
 .logo-mark {
   display: inline-flex;
   align-items: center;
 }
 
-.logo-mark img {
+.logo-spin {
   display: block;
-  height: 44px;
   width: 44px;
+  height: 44px;
+  perspective: 800px;
+  flex-shrink: 0;
 }
 
-.logo-mark .logo-ondark { display: none; }
-
-:root[data-theme="dark"] .logo-mark .logo-onlight { display: none; }
-:root[data-theme="dark"] .logo-mark .logo-ondark { display: block; }
-
-.foot-logo.logo-mark img {
-  height: 34px;
+.foot-logo.logo-mark .logo-spin {
   width: 34px;
+  height: 34px;
+}
+
+.logo-spin__inner {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: logo-spin-y 3s linear infinite;
+}
+
+.logo-face {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  backface-visibility: hidden;
+}
+
+.logo-face-back {
+  transform: rotateY(180deg);
+}
+
+:root[data-theme="dark"] .logo-face {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+@keyframes logo-spin-y {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-spin__inner { animation: none; }
 }
 
 .main-nav ul {
@@ -653,4 +686,13 @@ section { padding: clamp(3.5rem, 8vh, 6rem) 0; }
   color: var(--muted);
   max-width: 52ch;
   margin: 0;
+}
+
+/* ---- Festival partner pages -------------------------------------------- */
+
+.festival-logo {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  margin-bottom: 1.75rem;
 }
