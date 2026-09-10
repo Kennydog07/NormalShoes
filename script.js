@@ -53,8 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
  
-  // Enquiry form -> mailto handoff
-  const form = document.querySelector("#enquiry-form");
+  // Contact form -> mailto handoff
+  const form = document.querySelector("#contact-form");
   if (form) {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const role = (data.get("role") || "").toString().trim();
       const message = (data.get("message") || "").toString().trim();
  
-      const subject = `Enquiry from ${firstName} ${lastName}`.trim();
+      const subject = `Message from ${firstName} ${lastName}`.trim();
       const bodyLines = [
         `Name: ${firstName} ${lastName}`.trim(),
         `Email: ${email}`,
@@ -135,6 +135,50 @@ document.addEventListener("DOMContentLoaded", () => {
       const success = document.querySelector(`#${form.id}-success`);
       if (success) {
         success.classList.add("is-visible");
+      }
+    });
+  });
+});
+
+// Nav dropdown (Festival Submissions)
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".has-dropdown").forEach((item) => {
+    const toggle = item.querySelector(".dropdown-toggle");
+    const menu = item.querySelector(".dropdown-menu");
+    if (!toggle || !menu) return;
+
+    const closeDropdown = () => {
+      item.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+    };
+    const openDropdown = () => {
+      item.classList.add("is-open");
+      toggle.setAttribute("aria-expanded", "true");
+    };
+
+    toggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (item.classList.contains("is-open")) {
+        closeDropdown();
+      } else {
+        openDropdown();
+      }
+    });
+
+    item.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeDropdown();
+        toggle.focus();
+      }
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    document.querySelectorAll(".has-dropdown.is-open").forEach((item) => {
+      if (!item.contains(e.target)) {
+        item.classList.remove("is-open");
+        const toggle = item.querySelector(".dropdown-toggle");
+        if (toggle) toggle.setAttribute("aria-expanded", "false");
       }
     });
   });

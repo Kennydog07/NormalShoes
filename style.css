@@ -14,6 +14,13 @@
   --gutter: 6vw;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
   --sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* ---- Decorative pastel palette (geometric shapes) ---- */
+  --shape-pink: #f4d8de;
+  --shape-mint: #d7ecdf;
+  --shape-butter: #faedc4;
+  --shape-lavender: #e3ddf4;
+  --shape-sky: #d8ebf6;
 }
 
 /* ---- Dark theme ---------------------------------------------------------
@@ -28,6 +35,12 @@
   --muted: #9c9b94;
   --accent: #f2f1ec;
   --header-bg: rgba(18, 18, 18, 0.88);
+
+  --shape-pink: #3f2a30;
+  --shape-mint: #223129;
+  --shape-butter: #40381f;
+  --shape-lavender: #2c2740;
+  --shape-sky: #1f303c;
 }
 
 * { box-sizing: border-box; }
@@ -192,6 +205,91 @@ a { color: inherit; text-decoration: none; }
 
 .main-nav a.is-active { border-color: var(--ink); }
 
+/* ---- Nav dropdown (Festival Submissions) ------------------------------- */
+
+.has-dropdown { position: relative; }
+
+.dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  padding: 0 0 4px;
+  border-bottom: 1px solid transparent;
+  font-family: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.dropdown-toggle:hover,
+.has-dropdown.is-open .dropdown-toggle { border-color: var(--ink); }
+
+.dropdown-caret {
+  width: 10px;
+  height: 10px;
+  stroke: currentColor;
+  fill: none;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.has-dropdown.is-open .dropdown-caret { transform: rotate(180deg); }
+
+.main-nav ul.dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.main-nav .has-dropdown.is-open ul.dropdown-menu { display: flex; }
+
+@media (min-width: 721px) {
+  .main-nav ul.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 210px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.5rem;
+    box-shadow: 0 16px 32px -16px rgba(0, 0, 0, 0.3);
+    z-index: 50;
+    gap: 0.1rem;
+  }
+
+  .main-nav ul.dropdown-menu a {
+    display: block;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    border-bottom: none;
+    border-radius: 5px;
+  }
+
+  .main-nav ul.dropdown-menu a:hover { background: var(--paper-dim); border-color: transparent; }
+}
+
+@media (max-width: 720px) {
+  .main-nav ul.dropdown-menu {
+    margin-top: 1rem;
+    padding-left: 1.25rem;
+    border-left: 1px solid var(--line);
+    gap: 1.1rem;
+  }
+
+  .dropdown-toggle { font-size: 0.95rem; }
+}
+
 .nav-toggle {
   display: none;
   background: none;
@@ -297,9 +395,13 @@ a { color: inherit; text-decoration: none; }
 /* ---- Hero ---------------------------------------------------------- */
 
 .hero {
+  position: relative;
+  overflow: hidden;
   padding: clamp(4rem, 12vh, 8rem) 0 clamp(3rem, 8vh, 5rem);
   border-bottom: 1px solid var(--line);
 }
+
+.hero .wrap { position: relative; z-index: 1; }
 
 .hero .eyebrow {
   font-size: 0.78rem;
@@ -445,6 +547,68 @@ section { padding: clamp(3.5rem, 8vh, 6rem) 0; }
   font-size: 0.95rem;
 }
 
+/* ---- Package tier cards ------------------------------------------------ */
+
+.tier-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+}
+
+.tier-card {
+  border: 1px solid var(--line);
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.tier-card.tier-featured {
+  border: 2px solid var(--ink);
+}
+
+.tier-card .eyebrow { margin-bottom: 0.75rem; }
+
+.tier-card h3 {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  margin: 0 0 0.6rem;
+}
+
+.tier-card .tier-tagline {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 0 0 1.75rem;
+}
+
+.tier-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.tier-card li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+.tier-card li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 8px;
+  height: 1px;
+  background: var(--ink);
+}
+
+.tier-card .cta-row { margin-top: auto; }
+
 /* ---- Quote / statement banner ---------------------------------------- */
 
 .statement {
@@ -580,7 +744,9 @@ section { padding: clamp(3.5rem, 8vh, 6rem) 0; }
 
 .site-footer .foot-links {
   display: flex;
-  gap: 2rem;
+  flex-wrap: wrap;
+  row-gap: 0.85rem;
+  column-gap: 2rem;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -661,8 +827,59 @@ section { padding: clamp(3.5rem, 8vh, 6rem) 0; }
 }
 
 .page-hero {
+  position: relative;
+  overflow: hidden;
   padding: clamp(3.5rem, 10vh, 6rem) 0 clamp(2.5rem, 6vh, 4rem);
   border-bottom: 1px solid var(--line);
+}
+
+.page-hero .wrap { position: relative; z-index: 1; }
+
+/* ---- Decorative geometric shapes ----------------------------------------
+   Purely decorative, low-opacity pastel shapes used to add a little colour
+   and texture to hero banners. Non-interactive and safely ignorable —
+   delete a .deco-shapes block from any page without affecting layout. */
+
+.deco-shapes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.deco-shape {
+  position: absolute;
+  opacity: 0.6;
+}
+
+.deco-circle { border-radius: 50%; }
+
+.deco-ring {
+  background: transparent;
+  border-radius: 50%;
+  border-width: 10px;
+  border-style: solid;
+}
+
+.deco-triangle {
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.deco-pink { background: var(--shape-pink); }
+.deco-mint { background: var(--shape-mint); }
+.deco-butter { background: var(--shape-butter); }
+.deco-lavender { background: var(--shape-lavender); }
+.deco-sky { background: var(--shape-sky); }
+
+.deco-ring.deco-pink { border-color: var(--shape-pink); }
+.deco-ring.deco-mint { border-color: var(--shape-mint); }
+.deco-ring.deco-butter { border-color: var(--shape-butter); }
+.deco-ring.deco-lavender { border-color: var(--shape-lavender); }
+.deco-ring.deco-sky { border-color: var(--shape-sky); }
+
+@media (max-width: 640px) {
+  .deco-shape { transform: scale(0.7); }
 }
 
 .page-hero .eyebrow {
