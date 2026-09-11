@@ -209,93 +209,8 @@ a { color: inherit; text-decoration: none; }
 
 .main-nav a.is-active { border-color: var(--ink); }
 
-/* ---- Nav dropdown (Festival Submissions) ------------------------------- */
-
-.has-dropdown { position: relative; }
-
-.dropdown-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: none;
-  border: none;
-  padding: 0 0 4px;
-  border-bottom: 1px solid transparent;
-  font-family: inherit;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink);
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-}
-
-.dropdown-toggle:hover,
-.has-dropdown.is-open .dropdown-toggle { border-color: var(--ink); }
-
-.dropdown-caret {
-  width: 10px;
-  height: 10px;
-  stroke: currentColor;
-  fill: none;
-  flex-shrink: 0;
-  transition: transform 0.2s ease;
-}
-
-.has-dropdown.is-open .dropdown-caret { transform: rotate(180deg); }
-
-.main-nav ul.dropdown-menu {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: none;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.main-nav .has-dropdown.is-open ul.dropdown-menu { display: flex; }
-
-@media (min-width: 721px) {
-  .main-nav ul.dropdown-menu {
-    position: absolute;
-    top: calc(100% + 14px);
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 210px;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 0.5rem;
-    box-shadow: 0 16px 32px -16px rgba(0, 0, 0, 0.3);
-    z-index: 50;
-    gap: 0.1rem;
-  }
-
-  .main-nav ul.dropdown-menu a {
-    display: block;
-    padding: 0.6rem 0.75rem;
-    font-size: 0.74rem;
-    letter-spacing: 0.08em;
-    border-bottom: none;
-    border-radius: 5px;
-  }
-
-  .main-nav ul.dropdown-menu a:hover { background: var(--paper-dim); border-color: transparent; }
-}
-
-@media (max-width: 720px) {
-  .main-nav ul.dropdown-menu {
-    margin-top: 1rem;
-    padding-left: 1.25rem;
-    border-left: 1px solid var(--line);
-    gap: 1.1rem;
-  }
-
-  .dropdown-toggle { font-size: 0.95rem; }
-}
-
 .nav-toggle {
-  display: none;
+  display: block;
   background: none;
   border: none;
   font-size: 1.6rem;
@@ -335,34 +250,34 @@ a { color: inherit; text-decoration: none; }
 :root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
 :root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
-@media (max-width: 720px) {
-  .nav-toggle { display: block; }
+/* ---- Nav overlay ---------------------------------------------------------
+   The hamburger + full-screen dropdown is used at every screen size, not
+   just mobile — .nav-toggle is the only way to open .main-nav. */
 
-  .main-nav {
-    position: fixed;
-    inset: 84px 0 0 0;
-    background: var(--paper);
-    transform: translateY(-100%);
-    transition: transform 0.3s ease, visibility 0.3s ease;
-    padding: 2.5rem var(--gutter);
-    border-top: 1px solid var(--line);
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  .main-nav.is-open {
-    transform: translateY(0);
-    visibility: visible;
-    pointer-events: auto;
-  }
-
-  .main-nav ul {
-    flex-direction: column;
-    gap: 1.75rem;
-  }
-
-  .main-nav a { font-size: 0.95rem; }
+.main-nav {
+  position: fixed;
+  inset: 84px 0 0 0;
+  background: var(--paper);
+  transform: translateY(-100%);
+  transition: transform 0.3s ease, visibility 0.3s ease;
+  padding: 2.5rem var(--gutter);
+  border-top: 1px solid var(--line);
+  visibility: hidden;
+  pointer-events: none;
 }
+
+.main-nav.is-open {
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.main-nav ul {
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.main-nav a { font-size: 0.95rem; }
 
 /* ---- Buttons ----------------------------------------------------------- */
 
