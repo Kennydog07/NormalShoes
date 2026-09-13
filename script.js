@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ].filter((line) => line !== null);
  
       const mailto =
-        "mailto:normalshoes@gmail.com" +
+        "mailto:normalshoeseditions@gmail.com" +
         `?subject=${encodeURIComponent(subject)}` +
         `&body=${encodeURIComponent(bodyLines.join("\n"))}`;
  
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const recipient = form.dataset.signup || "normalshoes@gmail.com";
+      const recipient = form.dataset.signup || "normalshoeseditions@gmail.com";
       const festival = form.dataset.festival || "Normal Shoes";
       const data = new FormData(form);
 
