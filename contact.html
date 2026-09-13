@@ -78,7 +78,11 @@
 
     <section>
       <div class="wrap">
-        <form id="contact-form" class="form-grid" novalidate>
+        <form id="contact-form" class="form-grid" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="contact" />
+          <p style="position:absolute; left:-9999px;">
+            <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+          </p>
           <div class="field">
             <label for="firstName">First Name</label>
             <input type="text" id="firstName" name="firstName" required />
@@ -115,14 +119,13 @@
         </form>
 
         <p class="form-note">
-          Submitting this form opens your email client with the details
-          filled in, addressed to normalshoeseditions@gmail.com — just hit send
-          from there.
+          Submitting this form sends your details straight to us at
+          normalshoeseditions@gmail.com.
         </p>
 
         <div id="form-success" class="form-success">
-          Your email client should now be open with your message ready to
-          send. If nothing happened, email us directly at
+          Thanks — your message is on its way. If anything looks wrong,
+          email us directly at
           <a href="mailto:normalshoeseditions@gmail.com" style="text-decoration:underline;">normalshoeseditions@gmail.com</a>.
         </div>
 

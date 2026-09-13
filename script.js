@@ -53,12 +53,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
  
-  // Contact form -> mailto handoff
+  // Contact form -> Netlify Forms, with a mailto fallback if that fails
   const form = document.querySelector("#contact-form");
   if (form) {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
- 
+
       const data = new FormData(form);
       const firstName = (data.get("firstName") || "").toString().trim();
       const lastName = (data.get("lastName") || "").toString().trim();
@@ -66,29 +66,45 @@ document.addEventListener("DOMContentLoaded", () => {
       const institution = (data.get("institution") || "").toString().trim();
       const role = (data.get("role") || "").toString().trim();
       const message = (data.get("message") || "").toString().trim();
- 
-      const subject = `Message from ${firstName} ${lastName}`.trim();
-      const bodyLines = [
-        `Name: ${firstName} ${lastName}`.trim(),
-        `Email: ${email}`,
-        institution ? `Institution: ${institution}` : null,
-        role ? `I am a: ${role}` : null,
-        "",
-        "Message:",
-        message,
-      ].filter((line) => line !== null);
- 
-      const mailto =
-        "mailto:normalshoeseditions@gmail.com" +
-        `?subject=${encodeURIComponent(subject)}` +
-        `&body=${encodeURIComponent(bodyLines.join("\n"))}`;
- 
-      window.location.href = mailto;
- 
-      const success = document.querySelector("#form-success");
-      if (success) {
-        success.classList.add("is-visible");
-      }
+
+      const showSuccess = () => {
+        const success = document.querySelector("#form-success");
+        if (success) {
+          success.classList.add("is-visible");
+        }
+        form.reset();
+      };
+
+      const sendMailtoFallback = () => {
+        const subject = `Message from ${firstName} ${lastName}`.trim();
+        const bodyLines = [
+          `Name: ${firstName} ${lastName}`.trim(),
+          `Email: ${email}`,
+          institution ? `Institution: ${institution}` : null,
+          role ? `I am a: ${role}` : null,
+          "",
+          "Message:",
+          message,
+        ].filter((line) => line !== null);
+
+        window.location.href =
+          "mailto:normalshoeseditions@gmail.com" +
+          `?subject=${encodeURIComponent(subject)}` +
+          `&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+
+        showSuccess();
+      };
+
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(data).toString(),
+      })
+        .then((response) => {
+          if (!response.ok) throw new Error("Form submission failed");
+          showSuccess();
+        })
+        .catch(sendMailtoFallback);
     });
   }
  
@@ -103,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
  
 
-// Festival DVD sign-up forms -> mailto handoff
+// Festival DVD sign-up forms -> Netlify Forms, with a mailto fallback if that fails
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("form[data-signup]").forEach((form) => {
     form.addEventListener("submit", (e) => {
@@ -113,29 +129,46 @@ document.addEventListener("DOMContentLoaded", () => {
       const festival = form.dataset.festival || "Normal Shoes";
       const data = new FormData(form);
 
-      const lines = [];
-      form.querySelectorAll("[name]").forEach((field) => {
-        const value = (data.get(field.name) || "").toString().trim();
-        if (!value) return;
-        const label = form.querySelector(`label[for="${field.id}"]`);
-        const labelText = label ? label.textContent.trim() : field.name;
-        lines.push(`${labelText}: ${value}`);
-      });
+      const showSuccess = () => {
+        const success = document.querySelector(`#${form.id}-success`);
+        if (success) {
+          success.classList.add("is-visible");
+        }
+        form.reset();
+      };
 
-      const filmTitle = (data.get("filmTitle") || "").toString().trim();
-      const subject = `${festival} Collection Submission${filmTitle ? " — " + filmTitle : ""}`;
+      const sendMailtoFallback = () => {
+        const lines = [];
+        form.querySelectorAll("[name]").forEach((field) => {
+          if (field.name === "form-name" || field.name === "bot-field") return;
+          const value = (data.get(field.name) || "").toString().trim();
+          if (!value) return;
+          const label = form.querySelector(`label[for="${field.id}"]`);
+          const labelText = label ? label.textContent.trim() : field.name;
+          lines.push(`${labelText}: ${value}`);
+        });
 
-      const mailto =
-        `mailto:${recipient}` +
-        `?subject=${encodeURIComponent(subject)}` +
-        `&body=${encodeURIComponent(lines.join("\n"))}`;
+        const filmTitle = (data.get("filmTitle") || "").toString().trim();
+        const subject = `${festival} Collection Submission${filmTitle ? " — " + filmTitle : ""}`;
 
-      window.location.href = mailto;
+        window.location.href =
+          `mailto:${recipient}` +
+          `?subject=${encodeURIComponent(subject)}` +
+          `&body=${encodeURIComponent(lines.join("\n"))}`;
 
-      const success = document.querySelector(`#${form.id}-success`);
-      if (success) {
-        success.classList.add("is-visible");
-      }
+        showSuccess();
+      };
+
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(data).toString(),
+      })
+        .then((response) => {
+          if (!response.ok) throw new Error("Form submission failed");
+          showSuccess();
+        })
+        .catch(sendMailtoFallback);
     });
   });
 });

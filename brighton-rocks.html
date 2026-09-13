@@ -160,7 +160,11 @@
           <h2>Want to be part of Festival History — Contact us</h2>
           <span class="num">03</span>
         </div>
-        <form id="briff-signup-form" class="form-grid" data-signup="normalshoeseditions@gmail.com" data-festival="Brighton Rocks" novalidate>
+        <form id="briff-signup-form" class="form-grid" name="brighton-rocks-signup" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-signup="normalshoeseditions@gmail.com" data-festival="Brighton Rocks" novalidate>
+          <input type="hidden" name="form-name" value="brighton-rocks-signup" />
+          <p style="position:absolute; left:-9999px;">
+            <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+          </p>
           <div class="field">
             <label for="briffFirstName">First Name</label>
             <input type="text" id="briffFirstName" name="firstName" required />
@@ -195,14 +199,13 @@
         </form>
 
         <p class="form-note">
-          Submitting this form opens your email client with your details
-          filled in, addressed to normalshoeseditions@gmail.com — just hit send
-          from there.
+          Submitting this form sends your details straight to us at
+          normalshoeseditions@gmail.com.
         </p>
 
         <div id="briff-signup-form-success" class="form-success">
-          Your email client should now be open with your submission ready
-          to send. If nothing happened, email us directly at
+          Thanks — your submission is on its way. If anything looks wrong,
+          email us directly at
           <a href="mailto:normalshoeseditions@gmail.com" style="text-decoration:underline;">normalshoeseditions@gmail.com</a>.
         </div>
       </div>
