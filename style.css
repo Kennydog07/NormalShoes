@@ -524,6 +524,75 @@ section { padding: clamp(3.5rem, 8vh, 6rem) 0; }
   font-size: 0.95rem;
 }
 
+/* ---- Archive ------------------------------------------------------------ */
+
+.archive-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 280px));
+  gap: 2.5rem;
+}
+
+.archive-card {
+  display: block;
+  color: inherit;
+}
+
+.archive-card-image {
+  margin: 0 0 1rem;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.archive-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.archive-card:hover .archive-card-image img,
+.archive-card:focus-visible .archive-card-image img {
+  transform: scale(1.04);
+}
+
+.archive-card h3 {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  margin: 0 0 0.3rem;
+}
+
+.archive-card .archive-year {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.archive-gallery {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.archive-gallery figure {
+  margin: 0;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.archive-gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 /* ---- Package tier cards ------------------------------------------------ */
 
 .tier-grid {

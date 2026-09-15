@@ -172,3 +172,56 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+// Archive enquiry forms -> Netlify Forms, with a mailto fallback if that fails
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("form[data-archive]").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const recipient = form.dataset.recipient || "normalshoeseditions@gmail.com";
+      const filmTitle = form.dataset.film || "Archive";
+      const data = new FormData(form);
+
+      const showSuccess = () => {
+        const success = document.querySelector(`#${form.id}-success`);
+        if (success) {
+          success.classList.add("is-visible");
+        }
+        form.reset();
+      };
+
+      const sendMailtoFallback = () => {
+        const lines = [];
+        form.querySelectorAll("[name]").forEach((field) => {
+          if (field.name === "form-name" || field.name === "bot-field") return;
+          const value = (data.get(field.name) || "").toString().trim();
+          if (!value) return;
+          const label = form.querySelector(`label[for="${field.id}"]`);
+          const labelText = label ? label.textContent.trim() : field.name;
+          lines.push(`${labelText}: ${value}`);
+        });
+
+        const subject = `Archive Enquiry — ${filmTitle}`;
+
+        window.location.href =
+          `mailto:${recipient}` +
+          `?subject=${encodeURIComponent(subject)}` +
+          `&body=${encodeURIComponent(lines.join("\n"))}`;
+
+        showSuccess();
+      };
+
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(data).toString(),
+      })
+        .then((response) => {
+          if (!response.ok) throw new Error("Form submission failed");
+          showSuccess();
+        })
+        .catch(sendMailtoFallback);
+    });
+  });
+});
