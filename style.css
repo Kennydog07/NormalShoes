@@ -338,54 +338,16 @@ a { color: inherit; text-decoration: none; }
 }
 
 .hero-showcase {
-  display: flex;
-  justify-content: center;
-}
-
-.dvd-spin {
-  display: block;
-  width: 100%;
-  max-width: 260px;
-  aspect-ratio: 1 / 1;
-  perspective: 1600px;
-  margin: 0 auto;
-}
-
-.dvd-spin__inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  animation: dvd-spin-y 9s linear infinite;
-}
-
-.dvd-face {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   border: 1px solid var(--line);
-  backface-visibility: hidden;
 }
 
-.dvd-face img {
+.hero-showcase img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-.dvd-face-back {
-  transform: rotateY(180deg);
-}
-
-@keyframes dvd-spin-y {
-  from { transform: rotateY(0deg); }
-  to { transform: rotateY(360deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dvd-spin__inner { animation: none; }
 }
 
 .hero .eyebrow {
