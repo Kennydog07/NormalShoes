@@ -327,32 +327,6 @@ a { color: inherit; text-decoration: none; }
 .hero .wrap.hero-inner {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: clamp(2rem, 5vw, 4rem);
-  align-items: center;
-}
-
-@media (max-width: 900px) {
-  .hero .wrap.hero-inner { grid-template-columns: 1fr; }
-}
-
-.hero-video {
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  background: #000;
-}
-
-.hero-video video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .hero-video { aspect-ratio: 16 / 9; }
 }
 
 .hero .eyebrow {
