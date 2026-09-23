@@ -131,64 +131,26 @@ a { color: inherit; text-decoration: none; }
   transform: scaleX(-1);
 }
 
-/* ---- Logo mark (spinning image badge) ---------------------------------- */
+/* ---- Logo mark (wordmark image) --------------------------------------- */
 
 .logo-mark {
   display: inline-flex;
   align-items: center;
 }
 
-.logo-mark .logo-text {
-  margin-left: 0.65rem;
+.logo-mark .logo-img {
+  display: block;
+  width: auto;
+  height: 62px;
 }
 
-.logo-spin {
-  display: block;
-  width: 44px;
+.foot-logo.logo-mark .logo-img {
   height: 44px;
-  perspective: 800px;
-  flex-shrink: 0;
 }
 
-.foot-logo.logo-mark .logo-spin {
-  width: 34px;
-  height: 34px;
-}
-
-.logo-spin__inner {
-  display: block;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  animation: logo-spin-y 3s linear infinite;
-}
-
-.logo-face {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  backface-visibility: hidden;
-}
-
-.logo-face-back {
-  transform: rotateY(180deg);
-}
-
-:root[data-theme="dark"] .logo-face {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
-}
-
-@keyframes logo-spin-y {
-  from { transform: rotateY(0deg); }
-  to { transform: rotateY(360deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .logo-spin__inner { animation: none; }
+/* The wordmark is black ink on transparent; flip it to white in dark mode. */
+:root[data-theme="dark"] .logo-img {
+  filter: invert(1);
 }
 
 .main-nav ul {
