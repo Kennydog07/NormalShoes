@@ -225,3 +225,43 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+// Hastings Rocks "Submit My Film" -> permission disclaimer gate
+document.addEventListener("DOMContentLoaded", () => {
+  const openBtn = document.querySelector("#hriff-submit-film-btn");
+  const dialog = document.querySelector("#hriff-permission-dialog");
+  if (!openBtn || !dialog) return;
+
+  const agreeBtn = dialog.querySelector("#hriff-permission-agree");
+  const cancelBtn = dialog.querySelector("#hriff-permission-cancel");
+  const permissionField = document.querySelector("#hriffPermission");
+
+  openBtn.addEventListener("click", () => {
+    dialog.showModal();
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    dialog.close();
+  });
+
+  dialog.addEventListener("click", (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+
+  agreeBtn.addEventListener("click", () => {
+    if (permissionField) {
+      permissionField.value =
+        "I give Normal Shoes pre-requisite permission to include the film in the Hastings Rocks compilation.";
+    }
+    dialog.close();
+
+    const target = document.querySelector("#signup");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+    const firstField = document.querySelector("#hriffFirstName");
+    if (firstField) {
+      firstField.focus();
+    }
+  });
+});

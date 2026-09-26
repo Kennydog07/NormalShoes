@@ -77,12 +77,29 @@
     <section class="preorder-banner">
       <div class="wrap">
         <p class="eyebrow">Hastings Rocks Collection</p>
-        <a class="preorder-btn" href="#signup">
-          <img src="assets/hastings-rocks-logo.png" alt="" />
-          Pre Order Your Copy Now
-        </a>
+        <div class="cta-row" style="justify-content:center;">
+          <a class="preorder-btn" href="#signup">
+            <img src="assets/hastings-rocks-logo.png" alt="" />
+            Pre Order Your Copy Now
+          </a>
+          <button type="button" class="preorder-btn preorder-btn-outline" id="hriff-submit-film-btn">
+            Submit My Film
+          </button>
+        </div>
       </div>
     </section>
+
+    <dialog id="hriff-permission-dialog" class="disclaimer-dialog">
+      <h3>Before You Submit</h3>
+      <p>
+        &ldquo;I give Normal Shoes pre-requisite permission to include the
+        film in the Hastings Rocks compilation.&rdquo;
+      </p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" id="hriff-permission-cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="hriff-permission-agree">I Agree &mdash; Continue</button>
+      </div>
+    </dialog>
 
     <section class="section-border">
       <div class="wrap editorial">
@@ -219,6 +236,7 @@
             <label for="hriffMessage">Anything else we should know</label>
             <textarea id="hriffMessage" name="message" placeholder="Format, credits, a link to a screener — whatever's useful."></textarea>
           </div>
+          <input type="hidden" id="hriffPermission" name="permission" value="" />
           <div class="field full">
             <button type="submit" class="btn btn-primary">Submit My Film</button>
           </div>
