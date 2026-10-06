@@ -284,6 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const preDialog = document.querySelector("#hriff-preorder-dialog");
   if (preDialog) {
     const openPreorder = () => {
+      preDialog.dispatchEvent(new Event("hriff-reset"));
       preDialog.querySelectorAll(".form-success, .form-error").forEach((el) => el.classList.remove("is-visible"));
       if (!preDialog.open) preDialog.showModal();
     };
@@ -294,6 +295,87 @@ document.addEventListener("DOMContentLoaded", () => {
       preDialog.close();
     });
     closeOnBackdrop(preDialog);
+
+    // Pay by card: Stripe Embedded Checkout, created by a Netlify function.
+    // If card payment isn't available the request form below still works.
+    const payBtn = preDialog.querySelector("#hriff-pay-btn");
+    if (payBtn) {
+      const payPanel = preDialog.querySelector("#hriff-pay-now");
+      const checkoutWrap = preDialog.querySelector("#hriff-checkout-wrap");
+      const payError = preDialog.querySelector("#hriff-pay-error");
+      const paySuccess = preDialog.querySelector("#hriff-pay-success");
+      const requestParts = preDialog.querySelectorAll("#hriff-preorder-form, .form-note, .order-details");
+      const payLabel = payBtn.innerHTML;
+      let checkout = null;
+
+      const loadStripeJs = () =>
+        new Promise((resolve, reject) => {
+          if (window.Stripe) return resolve();
+          const s = document.createElement("script");
+          s.src = "https://js.stripe.com/v3/";
+          s.onload = resolve;
+          s.onerror = () => reject(new Error("Stripe.js failed to load"));
+          document.head.appendChild(s);
+        });
+
+      const resetPayment = () => {
+        if (checkout) {
+          checkout.destroy();
+          checkout = null;
+        }
+        checkoutWrap.hidden = true;
+        payPanel.hidden = false;
+        requestParts.forEach((el) => (el.hidden = false));
+        payBtn.disabled = false;
+        payBtn.innerHTML = payLabel;
+        payError.classList.remove("is-visible");
+        paySuccess.classList.remove("is-visible");
+      };
+
+      const showPayError = () => {
+        payError.textContent =
+          "Card payment isn't available right now. Please use the pre-order request form below and we'll email you a secure payment link.";
+        payError.classList.add("is-visible");
+        payBtn.disabled = false;
+        payBtn.innerHTML = payLabel;
+      };
+
+      payBtn.addEventListener("click", async () => {
+        payError.classList.remove("is-visible");
+        payBtn.disabled = true;
+        payBtn.textContent = "Loading secure payment…";
+        try {
+          const res = await fetch("/.netlify/functions/create-checkout", { method: "POST" });
+          const info = await res.json().catch(() => ({}));
+          if (!res.ok || !info.clientSecret || !info.publishableKey) throw new Error("unavailable");
+
+          await loadStripeJs();
+          const stripe = window.Stripe(info.publishableKey);
+          checkout = await stripe.initEmbeddedCheckout({
+            fetchClientSecret: async () => info.clientSecret,
+            onComplete: () => {
+              if (checkout) {
+                checkout.destroy();
+                checkout = null;
+              }
+              checkoutWrap.hidden = true;
+              paySuccess.classList.add("is-visible");
+            },
+          });
+
+          payPanel.hidden = true;
+          requestParts.forEach((el) => (el.hidden = true));
+          checkoutWrap.hidden = false;
+          checkout.mount("#hriff-checkout");
+        } catch (err) {
+          showPayError();
+        }
+      });
+
+      preDialog.querySelector("#hriff-checkout-close").addEventListener("click", () => preDialog.close());
+      preDialog.addEventListener("close", resetPayment);
+      preDialog.addEventListener("hriff-reset", resetPayment);
+    }
 
     if (window.location.hash === "#preorder") openPreorder();
     window.addEventListener("hashchange", () => {

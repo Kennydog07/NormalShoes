@@ -1072,6 +1072,30 @@ dialog.preorder-dialog .form-success {
 
 /* ---- Form status, consent & order details ----------------------------- */
 
+dialog.preorder-dialog [hidden] { display: none !important; }
+
+.pay-now { margin: 0 0 1.75rem; }
+
+.pay-now .btn { cursor: pointer; width: 100%; }
+
+.pay-now .pay-note {
+  margin: 0.75rem 0 1.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.pay-now .pay-or {
+  margin: 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#hriff-checkout { min-height: 120px; }
+
 .form-error {
   display: none;
   margin-top: 2rem;
