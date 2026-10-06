@@ -23,7 +23,7 @@
   <header class="site-header">
     <div class="wrap">
       <a aria-label='Normal Shoes — home' class='logo logo-mark' href='/'>
-        <img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296">
+        <picture><source type="image/webp" srcset="/assets/normal-shoes-logo-240.webp" /><img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296"></picture>
       </a>
       <nav class="main-nav" aria-label="Primary">
         <ul>
@@ -98,10 +98,10 @@
           <span class="num">01</span>
         </div>
         <div class="archive-gallery">
-          <figure><img src="assets/cal-dalglish-case-front.jpg" alt="Brimful Bellies &amp; Bad Behaviour case, front" /></figure>
-          <figure><img src="assets/cal-dalglish-cover-detail.jpg" alt="Brimful Bellies &amp; Bad Behaviour case, cover detail" /></figure>
-          <figure><img src="assets/cal-dalglish-digipak-cards.jpg" alt="Brimful Bellies &amp; Bad Behaviour digipak, open" /></figure>
-          <figure><img src="assets/cal-dalglish-disc-tray.jpg" alt="Brimful Bellies &amp; Bad Behaviour disc" /></figure>
+          <figure><picture><source type="image/webp" srcset="assets/cal-dalglish-case-front-400.webp 400w, assets/cal-dalglish-case-front-800.webp 800w, assets/cal-dalglish-case-front-1200.webp 1200w" sizes="(max-width: 560px) 88vw, (max-width: 1100px) 44vw, 260px" /><img src="assets/cal-dalglish-case-front-800.jpg" alt="Brimful Bellies &amp; Bad Behaviour case, front" width="800" height="1067" loading="lazy" decoding="async" /></picture></figure>
+          <figure><picture><source type="image/webp" srcset="assets/cal-dalglish-cover-detail-400.webp 400w, assets/cal-dalglish-cover-detail-800.webp 800w, assets/cal-dalglish-cover-detail-1200.webp 1200w" sizes="(max-width: 560px) 88vw, (max-width: 1100px) 44vw, 260px" /><img src="assets/cal-dalglish-cover-detail-800.jpg" alt="Brimful Bellies &amp; Bad Behaviour case, cover detail" width="800" height="1067" loading="lazy" decoding="async" /></picture></figure>
+          <figure><picture><source type="image/webp" srcset="assets/cal-dalglish-digipak-cards-400.webp 400w, assets/cal-dalglish-digipak-cards-800.webp 800w, assets/cal-dalglish-digipak-cards-1200.webp 1200w" sizes="(max-width: 560px) 88vw, (max-width: 1100px) 44vw, 260px" /><img src="assets/cal-dalglish-digipak-cards-800.jpg" alt="Brimful Bellies &amp; Bad Behaviour digipak, open" width="800" height="1066" loading="lazy" decoding="async" /></picture></figure>
+          <figure><picture><source type="image/webp" srcset="assets/cal-dalglish-disc-tray-400.webp 400w, assets/cal-dalglish-disc-tray-800.webp 800w, assets/cal-dalglish-disc-tray-1200.webp 1200w" sizes="(max-width: 560px) 88vw, (max-width: 1100px) 44vw, 260px" /><img src="assets/cal-dalglish-disc-tray-800.jpg" alt="Brimful Bellies &amp; Bad Behaviour disc" width="800" height="1066" loading="lazy" decoding="async" /></picture></figure>
         </div>
       </div>
     </section>
@@ -109,25 +109,43 @@
     <section class="section-border">
       <div class="wrap">
         <div class="section-head">
-          <h2>Enquire About This Release</h2>
+          <h2>Pre-Order or Enquire About This Release</h2>
           <span class="num">02</span>
         </div>
-        <form id="archive-brimful-bellies-form" class="form-grid" name="archive-brimful-bellies" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-archive="true" data-recipient="normalshoeseditions@gmail.com" data-film="Brimful Bellies &amp; Bad Behaviour" novalidate>
+        <div class="order-details">
+          <dl>
+            <dt>Price</dt><dd>[PRICE]</dd>
+            <dt>Delivery</dt><dd>[DELIVERY COST]</dd>
+            <dt>Payment</dt><dd>[PAYMENT METHOD]</dd>
+          </dl>
+          <p>
+            Submitting this form registers a pre-order request &mdash; no payment
+            is taken on this website. We'll email you to confirm the price,
+            delivery and payment details before anything is charged.
+          </p>
+          <p>
+            You can cancel at any time before your order is dispatched, and you
+            have a legal right to cancel within 14 days of receiving it. See our
+            <a href="/terms">Terms of Sale</a> for how cancellations and refunds work.
+          </p>
+        </div>
+
+        <form id="archive-brimful-bellies-form" class="form-grid" name="archive-brimful-bellies" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-archive="true" data-recipient="normalshoeseditions@gmail.com" data-film="Brimful Bellies &amp; Bad Behaviour">
           <input type="hidden" name="form-name" value="archive-brimful-bellies" />
           <p style="position:absolute; left:-9999px;">
             <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
           </p>
           <div class="field">
             <label for="archFirstName">First Name</label>
-            <input type="text" id="archFirstName" name="firstName" required />
+            <input type="text" id="archFirstName" name="firstName" autocomplete="given-name" required />
           </div>
           <div class="field">
             <label for="archLastName">Last Name</label>
-            <input type="text" id="archLastName" name="lastName" required />
+            <input type="text" id="archLastName" name="lastName" autocomplete="family-name" required />
           </div>
           <div class="field">
             <label for="archEmail">Email</label>
-            <input type="email" id="archEmail" name="email" required />
+            <input type="email" id="archEmail" name="email" autocomplete="email" required />
           </div>
           <div class="field">
             <label for="archCopies">Number of Copies</label>
@@ -137,21 +155,31 @@
             <label for="archMessage">Anything else we should know</label>
             <textarea id="archMessage" name="message" placeholder="Delivery address, tier preference, timing — whatever's useful."></textarea>
           </div>
+          <div class="field full consent-field">
+            <label class="checkbox" for="archConsent">
+              <input type="checkbox" id="archConsent" name="termsConsent" value="Yes - has read the Terms and Privacy Policy" required />
+              <span>I have read the <a href="/terms" target="_blank" rel="noopener">Terms</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+            </label>
+          </div>
           <div class="field full">
-            <button type="submit" class="btn btn-primary">Send Enquiry</button>
+            <button type="submit" class="btn btn-primary">Send Pre-Order Request</button>
           </div>
         </form>
 
         <p class="form-note">
-          Submitting this form sends your details straight to us at
-          normalshoeseditions@gmail.com.
+          Submitting this form sends your details to us (via our website host,
+          Netlify) and to our inbox at normalshoeseditions@gmail.com. We only use
+          them to handle your pre-order request or enquiry. See our <a href="/privacy">Privacy Policy</a> for how we
+          handle your information and your rights.
         </p>
 
-        <div id="archive-brimful-bellies-form-success" class="form-success">
-          Thanks — your enquiry is on its way. If anything looks wrong,
+        <div id="archive-brimful-bellies-form-success" class="form-success" role="status">
+          Thanks — we've received your request and will email you to confirm
+          the details before anything is charged. If anything looks wrong,
           email us directly at
           <a href="mailto:normalshoeseditions@gmail.com" style="text-decoration:underline;">normalshoeseditions@gmail.com</a>.
         </div>
+        <div id="archive-brimful-bellies-form-error" class="form-error" role="alert"></div>
       </div>
     </section>
 
@@ -160,7 +188,7 @@
   <footer class="site-footer">
     <div class="wrap">
       <div class="foot-logo logo-mark">
-        <img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296">
+        <picture><source type="image/webp" srcset="/assets/normal-shoes-logo-240.webp" /><img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296" loading="lazy" decoding="async"></picture>
       </div>
       <ul class="foot-links">
         <li><a href='/'>Home</a></li>
@@ -171,9 +199,12 @@
         <li><a href='/package-tiers'>Package Tiers</a></li>
         <li><a href='/archive'>Archive</a></li>
         <li><a href='/contact'>Contact Us</a></li>
+        <li><a href='/privacy'>Privacy</a></li>
+        <li><a href='/terms'>Terms</a></li>
         <li><a href="mailto:normalshoeseditions@gmail.com">normalshoeseditions@gmail.com</a></li>
         <li><a href="https://www.instagram.com/normalshoeseditions/" target="_blank" rel="noopener">Instagram</a></li>
       </ul>
+      <p class="business-details">Normal Shoes &middot; Flat 113, Mariner Point, 83 Brighton Road, Shoreham-by-Sea, BN43 6DH &middot; <a href="mailto:normalshoeseditions@gmail.com">normalshoeseditions@gmail.com</a></p>
       <p class="copyright">&copy; 2026 Normal Shoes. All rights reserved.</p>
     </div>
   </footer>

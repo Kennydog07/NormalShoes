@@ -1,0 +1,16 @@
+# Response headers only — no build settings here, so the existing Netlify
+# site configuration (publish directory, forms, etc.) is unchanged.
+#
+# Asset filenames are not content-hashed, so use a moderate 7-day cache
+# rather than "immutable". If an image is replaced under the same name,
+# visitors may see the old one for up to a week — rename the file instead.
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/clapper-web.mp4"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
