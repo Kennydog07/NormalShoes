@@ -386,7 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
         paySuccess: preDialog.querySelector("#hriff-pay-success"),
         hideWhilePaying: preDialog.querySelectorAll("#hriff-preorder-form, .form-note, .order-details"),
         errorText:
-          "Card payment isn't available right now. Please use the pre-order request form below and we'll email you a secure payment link.",
+          "Card payment isn't available right now. Please use the pre-order request form below and we'll email you payment details.",
       });
       preDialog.querySelector("#hriff-checkout-close").addEventListener("click", () => preDialog.close());
       preDialog.addEventListener("close", pay.reset);
@@ -415,7 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
     paySuccess: document.querySelector("#arch-pay-success"),
     hideWhilePaying: document.querySelectorAll("form[data-archive], .form-note"),
     errorText:
-      "Card payment isn't available right now. Please use the pre-order request form below and we'll email you a secure payment link.",
+      "Card payment isn't available right now. Please use the pre-order request form below and we'll email you payment details.",
   });
   document.querySelector("#arch-checkout-close").addEventListener("click", pay.reset);
 });
