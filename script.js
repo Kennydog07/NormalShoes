@@ -232,6 +232,83 @@ document.addEventListener("DOMContentLoaded", () => {
   videos.forEach((v) => io.observe(v));
 });
 
+// Stripe Embedded Checkout, created by a Netlify function (see
+// netlify/functions/create-checkout.js). If card payment isn't available the
+// page's request form still works.
+function setupCardPayment({ product, payBtn, payPanel, checkoutWrap, mount, payError, paySuccess, hideWhilePaying, errorText }) {
+  const payLabel = payBtn.innerHTML;
+  let checkout = null;
+
+  const loadStripeJs = () =>
+    new Promise((resolve, reject) => {
+      if (window.Stripe) return resolve();
+      const s = document.createElement("script");
+      s.src = "https://js.stripe.com/v3/";
+      s.onload = resolve;
+      s.onerror = () => reject(new Error("Stripe.js failed to load"));
+      document.head.appendChild(s);
+    });
+
+  const reset = () => {
+    if (checkout) {
+      checkout.destroy();
+      checkout = null;
+    }
+    checkoutWrap.hidden = true;
+    payPanel.hidden = false;
+    hideWhilePaying.forEach((el) => (el.hidden = false));
+    payBtn.disabled = false;
+    payBtn.innerHTML = payLabel;
+    payError.classList.remove("is-visible");
+    paySuccess.classList.remove("is-visible");
+  };
+
+  const showError = () => {
+    payError.textContent = errorText;
+    payError.classList.add("is-visible");
+    payBtn.disabled = false;
+    payBtn.innerHTML = payLabel;
+  };
+
+  payBtn.addEventListener("click", async () => {
+    payError.classList.remove("is-visible");
+    payBtn.disabled = true;
+    payBtn.textContent = "Loading secure payment…";
+    try {
+      const res = await fetch("/.netlify/functions/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ product }),
+      });
+      const info = await res.json().catch(() => ({}));
+      if (!res.ok || !info.clientSecret || !info.publishableKey) throw new Error("unavailable");
+
+      await loadStripeJs();
+      const stripe = window.Stripe(info.publishableKey);
+      checkout = await stripe.initEmbeddedCheckout({
+        fetchClientSecret: async () => info.clientSecret,
+        onComplete: () => {
+          if (checkout) {
+            checkout.destroy();
+            checkout = null;
+          }
+          checkoutWrap.hidden = true;
+          paySuccess.classList.add("is-visible");
+        },
+      });
+
+      payPanel.hidden = true;
+      hideWhilePaying.forEach((el) => (el.hidden = true));
+      checkoutWrap.hidden = false;
+      checkout.mount(mount);
+    } catch (err) {
+      showError();
+    }
+  });
+
+  return { reset };
+}
+
 // Hastings Rocks: consent popup before film submission + pre-order window
 document.addEventListener("DOMContentLoaded", () => {
   // Must match the Submission Requirements page: registering interest never
@@ -296,85 +373,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     closeOnBackdrop(preDialog);
 
-    // Pay by card: Stripe Embedded Checkout, created by a Netlify function.
-    // If card payment isn't available the request form below still works.
+    // Pay by card (shared checkout logic above)
     const payBtn = preDialog.querySelector("#hriff-pay-btn");
     if (payBtn) {
-      const payPanel = preDialog.querySelector("#hriff-pay-now");
-      const checkoutWrap = preDialog.querySelector("#hriff-checkout-wrap");
-      const payError = preDialog.querySelector("#hriff-pay-error");
-      const paySuccess = preDialog.querySelector("#hriff-pay-success");
-      const requestParts = preDialog.querySelectorAll("#hriff-preorder-form, .form-note, .order-details");
-      const payLabel = payBtn.innerHTML;
-      let checkout = null;
-
-      const loadStripeJs = () =>
-        new Promise((resolve, reject) => {
-          if (window.Stripe) return resolve();
-          const s = document.createElement("script");
-          s.src = "https://js.stripe.com/v3/";
-          s.onload = resolve;
-          s.onerror = () => reject(new Error("Stripe.js failed to load"));
-          document.head.appendChild(s);
-        });
-
-      const resetPayment = () => {
-        if (checkout) {
-          checkout.destroy();
-          checkout = null;
-        }
-        checkoutWrap.hidden = true;
-        payPanel.hidden = false;
-        requestParts.forEach((el) => (el.hidden = false));
-        payBtn.disabled = false;
-        payBtn.innerHTML = payLabel;
-        payError.classList.remove("is-visible");
-        paySuccess.classList.remove("is-visible");
-      };
-
-      const showPayError = () => {
-        payError.textContent =
-          "Card payment isn't available right now. Please use the pre-order request form below and we'll email you a secure payment link.";
-        payError.classList.add("is-visible");
-        payBtn.disabled = false;
-        payBtn.innerHTML = payLabel;
-      };
-
-      payBtn.addEventListener("click", async () => {
-        payError.classList.remove("is-visible");
-        payBtn.disabled = true;
-        payBtn.textContent = "Loading secure payment…";
-        try {
-          const res = await fetch("/.netlify/functions/create-checkout", { method: "POST" });
-          const info = await res.json().catch(() => ({}));
-          if (!res.ok || !info.clientSecret || !info.publishableKey) throw new Error("unavailable");
-
-          await loadStripeJs();
-          const stripe = window.Stripe(info.publishableKey);
-          checkout = await stripe.initEmbeddedCheckout({
-            fetchClientSecret: async () => info.clientSecret,
-            onComplete: () => {
-              if (checkout) {
-                checkout.destroy();
-                checkout = null;
-              }
-              checkoutWrap.hidden = true;
-              paySuccess.classList.add("is-visible");
-            },
-          });
-
-          payPanel.hidden = true;
-          requestParts.forEach((el) => (el.hidden = true));
-          checkoutWrap.hidden = false;
-          checkout.mount("#hriff-checkout");
-        } catch (err) {
-          showPayError();
-        }
+      const pay = setupCardPayment({
+        product: "hastings-rocks",
+        payBtn,
+        payPanel: preDialog.querySelector("#hriff-pay-now"),
+        checkoutWrap: preDialog.querySelector("#hriff-checkout-wrap"),
+        mount: preDialog.querySelector("#hriff-checkout"),
+        payError: preDialog.querySelector("#hriff-pay-error"),
+        paySuccess: preDialog.querySelector("#hriff-pay-success"),
+        hideWhilePaying: preDialog.querySelectorAll("#hriff-preorder-form, .form-note, .order-details"),
+        errorText:
+          "Card payment isn't available right now. Please use the pre-order request form below and we'll email you a secure payment link.",
       });
-
       preDialog.querySelector("#hriff-checkout-close").addEventListener("click", () => preDialog.close());
-      preDialog.addEventListener("close", resetPayment);
-      preDialog.addEventListener("hriff-reset", resetPayment);
+      preDialog.addEventListener("close", pay.reset);
+      preDialog.addEventListener("hriff-reset", pay.reset);
     }
 
     if (window.location.hash === "#preorder") openPreorder();
@@ -382,4 +398,24 @@ document.addEventListener("DOMContentLoaded", () => {
       if (window.location.hash === "#preorder") openPreorder();
     });
   }
+});
+
+// Archive release pages: pay by card
+document.addEventListener("DOMContentLoaded", () => {
+  const payBtn = document.querySelector("#arch-pay-btn");
+  if (!payBtn) return;
+
+  const pay = setupCardPayment({
+    product: payBtn.dataset.product,
+    payBtn,
+    payPanel: document.querySelector("#arch-pay-now"),
+    checkoutWrap: document.querySelector("#arch-checkout-wrap"),
+    mount: document.querySelector("#arch-checkout"),
+    payError: document.querySelector("#arch-pay-error"),
+    paySuccess: document.querySelector("#arch-pay-success"),
+    hideWhilePaying: document.querySelectorAll("form[data-archive], .form-note"),
+    errorText:
+      "Card payment isn't available right now. Please use the pre-order request form below and we'll email you a secure payment link.",
+  });
+  document.querySelector("#arch-checkout-close").addEventListener("click", pay.reset);
 });

@@ -8,7 +8,19 @@
 // Until both are set this returns 503 and the website falls back to the
 // pre-order request form.
 
-const PRODUCT_NAME = "Hastings Rocks Collection (pre-order)";
+// Products that can be bought. The page sends only the product key; name and
+// price are decided here on the server.
+const PRODUCTS = {
+  "hastings-rocks": {
+    name: "Hastings Rocks Collection (pre-order)",
+    order: "hastings-rocks-preorder",
+  },
+  "brimful-bellies": {
+    name: "Brimful Bellies & Bad Behaviour (archive release)",
+    order: "archive-brimful-bellies",
+  },
+};
+const DEFAULT_PRODUCT = "hastings-rocks";
 const PRICE_PENCE = 1999;
 const UK_DELIVERY_PENCE = 395;
 const MAX_QUANTITY = 10;
@@ -35,6 +47,16 @@ exports.handler = async (event) => {
     return reply(503, { error: "Card payments are not set up yet." });
   }
 
+  let requested = {};
+  try {
+    requested = JSON.parse(event.body || "{}");
+  } catch (err) {
+    return reply(400, { error: "Bad request" });
+  }
+  const productKey = requested.product || DEFAULT_PRODUCT;
+  const product = Object.prototype.hasOwnProperty.call(PRODUCTS, productKey) ? PRODUCTS[productKey] : null;
+  if (!product) return reply(400, { error: "Unknown product" });
+
   const params = new URLSearchParams();
   params.set("ui_mode", "embedded");
   params.set("mode", "payment");
@@ -48,7 +70,7 @@ exports.handler = async (event) => {
   params.set("line_items[0][adjustable_quantity][maximum]", String(MAX_QUANTITY));
   params.set("line_items[0][price_data][currency]", "gbp");
   params.set("line_items[0][price_data][unit_amount]", String(PRICE_PENCE));
-  params.set("line_items[0][price_data][product_data][name]", PRODUCT_NAME);
+  params.set("line_items[0][price_data][product_data][name]", product.name);
 
   params.set("shipping_address_collection[allowed_countries][0]", "GB");
   params.set("shipping_options[0][shipping_rate_data][type]", "fixed_amount");
@@ -56,7 +78,7 @@ exports.handler = async (event) => {
   params.set("shipping_options[0][shipping_rate_data][fixed_amount][amount]", String(UK_DELIVERY_PENCE));
   params.set("shipping_options[0][shipping_rate_data][fixed_amount][currency]", "gbp");
 
-  params.set("metadata[order]", "hastings-rocks-preorder");
+  params.set("metadata[order]", product.order);
 
   let response;
   try {

@@ -116,19 +116,39 @@
           <dl>
             <dt>Price</dt><dd>&pound;19.99</dd>
             <dt>Delivery</dt><dd>&pound;3.95 UK mainland &middot; elsewhere quoted on request</dd>
-            <dt>Payment</dt><dd>Card via Stripe &middot; secure link emailed once your order is confirmed</dd>
+            <dt>Payment</dt><dd>Card via Stripe &middot; pay now below, or we'll email a secure link once your order is confirmed</dd>
           </dl>
           <p>
-            Submitting this form registers a pre-order request &mdash; no payment
-            is taken on this website. We'll email you to confirm your order, with a
-            secure Stripe payment link &mdash; nothing is charged until you pay
-            using that link.
+            You can pay by card now with the button below &mdash; the payment is
+            handled by Stripe in a secure window on this page. Or submit the form
+            instead to register a pre-order request: no payment is taken with the
+            form, and we'll email you a secure Stripe payment link once your order
+            is confirmed.
           </p>
           <p>
             You can cancel at any time before your order is dispatched, and you
             have a legal right to cancel within 14 days of receiving it. See our
             <a href="/terms">Terms of Sale</a> for how cancellations and refunds work.
           </p>
+        </div>
+
+        <div class="pay-now" id="arch-pay-now">
+          <button type="button" class="btn btn-primary" id="arch-pay-btn" data-product="brimful-bellies">Pay by card now &mdash; &pound;19.99</button>
+          <p class="pay-note">Opens a secure Stripe payment window here. Quantity and UK delivery (&pound;3.95) are set at checkout.</p>
+          <p class="pay-or">Or register a pre-order request &mdash; no payment now:</p>
+        </div>
+        <div id="arch-checkout-wrap" hidden>
+          <div id="arch-checkout"></div>
+          <div class="dialog-actions" style="margin-top:1.25rem;">
+            <button type="button" class="btn btn-secondary" id="arch-checkout-close">Cancel payment</button>
+          </div>
+        </div>
+        <div id="arch-pay-error" class="form-error" role="alert"></div>
+        <div id="arch-pay-success" class="form-success" role="status">
+          Thank you &mdash; your payment has been received. Stripe will email your
+          receipt, and we'll be in touch about dispatch. If anything looks wrong,
+          email us at
+          <a href="mailto:normalshoeseditions@gmail.com" style="text-decoration:underline;">normalshoeseditions@gmail.com</a>.
         </div>
 
         <form id="archive-brimful-bellies-form" class="form-grid" name="archive-brimful-bellies" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-archive="true" data-recipient="normalshoeseditions@gmail.com" data-film="Brimful Bellies &amp; Bad Behaviour">

@@ -1072,7 +1072,10 @@ dialog.preorder-dialog .form-success {
 
 /* ---- Form status, consent & order details ----------------------------- */
 
-dialog.preorder-dialog [hidden] { display: none !important; }
+dialog.preorder-dialog [hidden],
+.form-grid[hidden],
+.form-note[hidden],
+.order-details[hidden] { display: none !important; }
 
 .pay-now { margin: 0 0 1.75rem; }
 
@@ -1095,6 +1098,9 @@ dialog.preorder-dialog [hidden] { display: none !important; }
 }
 
 #hriff-checkout { min-height: 120px; }
+
+#hriff-pay-error,
+#arch-pay-error { margin: 1rem 0 1.75rem; }
 
 .form-error {
   display: none;
