@@ -1132,7 +1132,7 @@ dialog.preorder-dialog .form-success {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
-  align-self: center;
+  align-self: baseline;
 }
 
 .order-details dd { margin: 0; }
