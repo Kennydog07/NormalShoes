@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
  
 
-// Festival DVD sign-up forms -> Netlify Forms, with a mailto fallback if that fails
+// Festival sign-up / pre-order forms -> Netlify Forms, with a mailto fallback if that fails
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("form[data-signup]").forEach((form) => {
     form.addEventListener("submit", (e) => {
@@ -128,6 +128,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const recipient = form.dataset.signup || "normalshoeseditions@gmail.com";
       const festival = form.dataset.festival || "Normal Shoes";
       const data = new FormData(form);
+
+      const filmTitle = (data.get("filmTitle") || "").toString().trim();
+      const fullName = [data.get("firstName"), data.get("lastName")]
+        .map((v) => (v || "").toString().trim())
+        .filter(Boolean)
+        .join(" ");
+      const subject = form.dataset.subject
+        ? `${form.dataset.subject}${fullName ? " — " + fullName : ""}`
+        : `${festival} Collection Submission${filmTitle ? " — " + filmTitle : ""}`;
+      if (form.elements.subject) data.set("subject", subject);
 
       const showSuccess = () => {
         const success = document.querySelector(`#${form.id}-success`);
@@ -140,16 +150,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const sendMailtoFallback = () => {
         const lines = [];
         form.querySelectorAll("[name]").forEach((field) => {
-          if (field.name === "form-name" || field.name === "bot-field") return;
+          if (["form-name", "bot-field", "subject"].includes(field.name)) return;
           const value = (data.get(field.name) || "").toString().trim();
           if (!value) return;
           const label = form.querySelector(`label[for="${field.id}"]`);
           const labelText = label ? label.textContent.trim() : field.name;
           lines.push(`${labelText}: ${value}`);
         });
-
-        const filmTitle = (data.get("filmTitle") || "").toString().trim();
-        const subject = `${festival} Collection Submission${filmTitle ? " — " + filmTitle : ""}`;
 
         window.location.href =
           `mailto:${recipient}` +
@@ -226,42 +233,62 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Hastings Rocks "Submit My Film" -> permission disclaimer gate
+// Hastings Rocks: consent popup before film submission + pre-order window
 document.addEventListener("DOMContentLoaded", () => {
-  const openBtn = document.querySelector("#hriff-submit-film-btn");
-  const dialog = document.querySelector("#hriff-permission-dialog");
-  if (!openBtn || !dialog) return;
+  const PERMISSION_TEXT =
+    "I give Normal Shoes pre-requisite permission to include the film in the Hastings Rocks compilation.";
 
-  const agreeBtn = dialog.querySelector("#hriff-permission-agree");
-  const cancelBtn = dialog.querySelector("#hriff-permission-cancel");
-  const permissionField = document.querySelector("#hriffPermission");
+  const closeOnBackdrop = (dialog) => {
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  };
 
-  openBtn.addEventListener("click", () => {
-    dialog.showModal();
-  });
+  // Film submission: validate, ask for consent, then submit the form
+  const submitForm = document.querySelector("#hriff-signup-form");
+  const submitBtn = document.querySelector("#hriff-submit-btn");
+  const consentDialog = document.querySelector("#hriff-permission-dialog");
+  if (submitForm && submitBtn && consentDialog) {
+    const permissionField = document.querySelector("#hriffPermission");
 
-  cancelBtn.addEventListener("click", () => {
-    dialog.close();
-  });
+    submitBtn.addEventListener("click", () => {
+      if (!submitForm.reportValidity()) return;
+      consentDialog.showModal();
+    });
 
-  dialog.addEventListener("click", (e) => {
-    if (e.target === dialog) dialog.close();
-  });
+    consentDialog.querySelector("#hriff-permission-cancel").addEventListener("click", () => {
+      consentDialog.close();
+    });
 
-  agreeBtn.addEventListener("click", () => {
-    if (permissionField) {
-      permissionField.value =
-        "I give Normal Shoes pre-requisite permission to include the film in the Hastings Rocks compilation.";
-    }
-    dialog.close();
+    consentDialog.querySelector("#hriff-permission-agree").addEventListener("click", () => {
+      if (permissionField) permissionField.value = PERMISSION_TEXT;
+      consentDialog.close();
+      submitForm.requestSubmit();
+    });
 
-    const target = document.querySelector("#signup");
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
-    }
-    const firstField = document.querySelector("#hriffFirstName");
-    if (firstField) {
-      firstField.focus();
-    }
-  });
+    closeOnBackdrop(consentDialog);
+  }
+
+  // Pre-order window (also opened by links ending in #preorder)
+  const preBtn = document.querySelector("#hriff-preorder-btn");
+  const preDialog = document.querySelector("#hriff-preorder-dialog");
+  if (preDialog) {
+    const openPreorder = () => {
+      const success = preDialog.querySelector(".form-success");
+      if (success) success.classList.remove("is-visible");
+      if (!preDialog.open) preDialog.showModal();
+    };
+
+    if (preBtn) preBtn.addEventListener("click", openPreorder);
+
+    preDialog.querySelector("#hriff-preorder-cancel").addEventListener("click", () => {
+      preDialog.close();
+    });
+    closeOnBackdrop(preDialog);
+
+    if (window.location.hash === "#preorder") openPreorder();
+    window.addEventListener("hashchange", () => {
+      if (window.location.hash === "#preorder") openPreorder();
+    });
+  }
 });
