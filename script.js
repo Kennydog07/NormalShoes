@@ -53,61 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
  
-  // Contact form -> Netlify Forms, with a mailto fallback if that fails
-  const form = document.querySelector("#contact-form");
-  if (form) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const data = new FormData(form);
-      const firstName = (data.get("firstName") || "").toString().trim();
-      const lastName = (data.get("lastName") || "").toString().trim();
-      const email = (data.get("email") || "").toString().trim();
-      const institution = (data.get("institution") || "").toString().trim();
-      const role = (data.get("role") || "").toString().trim();
-      const message = (data.get("message") || "").toString().trim();
-
-      const showSuccess = () => {
-        const success = document.querySelector("#form-success");
-        if (success) {
-          success.classList.add("is-visible");
-        }
-        form.reset();
-      };
-
-      const sendMailtoFallback = () => {
-        const subject = `Message from ${firstName} ${lastName}`.trim();
-        const bodyLines = [
-          `Name: ${firstName} ${lastName}`.trim(),
-          `Email: ${email}`,
-          institution ? `Institution: ${institution}` : null,
-          role ? `I am a: ${role}` : null,
-          "",
-          "Message:",
-          message,
-        ].filter((line) => line !== null);
-
-        window.location.href =
-          "mailto:normalshoeseditions@gmail.com" +
-          `?subject=${encodeURIComponent(subject)}` +
-          `&body=${encodeURIComponent(bodyLines.join("\n"))}`;
-
-        showSuccess();
-      };
-
-      fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(data).toString(),
-      })
-        .then((response) => {
-          if (!response.ok) throw new Error("Form submission failed");
-          showSuccess();
-        })
-        .catch(sendMailtoFallback);
-    });
-  }
- 
   // Mark active nav link
   const path = window.location.pathname.split("/").pop() || "index.html";
   document.querySelectorAll(".main-nav a").forEach((link) => {
@@ -119,124 +64,180 @@ document.addEventListener("DOMContentLoaded", () => {
 });
  
 
-// Festival sign-up / pre-order forms -> Netlify Forms, with a mailto fallback if that fails
+// All site forms (contact, festival sign-ups, pre-orders, archive enquiries)
+// -> Netlify Forms.
+//
+// The success message is only shown when Netlify actually accepts the POST
+// (response.ok). If it fails for any reason we say so honestly on the page and
+// offer a mailto link — we never claim a message was sent when it wasn't.
+const CONTACT_EMAIL = "normalshoeseditions@gmail.com";
+
+function encodeFormData(form, overrides) {
+  const data = new FormData(form);
+  Object.entries(overrides || {}).forEach(([key, value]) => data.set(key, value));
+  // Netlify needs to know which form this is; every form also carries a
+  // hidden form-name input, but make sure it's always present.
+  if (!data.get("form-name") && form.getAttribute("name")) {
+    data.set("form-name", form.getAttribute("name"));
+  }
+  const params = new URLSearchParams();
+  data.forEach((value, key) => {
+    if (typeof value === "string") params.append(key, value);
+  });
+  return params.toString();
+}
+
+// Native validation does most of the work; this is a safety net that also
+// blocks whitespace-only answers and works even if `novalidate` is present.
+function formIsValid(form) {
+  let firstInvalid = null;
+  form.querySelectorAll("[required]").forEach((field) => {
+    if (field.type === "checkbox") {
+      field.setCustomValidity(field.checked ? "" : "Please tick this box to continue.");
+    } else if (typeof field.value === "string") {
+      field.setCustomValidity(field.value.trim() ? "" : "Please fill in this field.");
+    }
+    if (!field.checkValidity() && !firstInvalid) firstInvalid = field;
+  });
+  if (firstInvalid) {
+    form.reportValidity();
+    firstInvalid.focus();
+    return false;
+  }
+  return true;
+}
+
+function statusBox(form, kind) {
+  const ids = kind === "success"
+    ? [`${form.id}-success`, form.dataset.successId]
+    : [`${form.id}-error`];
+  for (const id of ids) {
+    const el = id && document.getElementById(id);
+    if (el) return el;
+  }
+  if (kind !== "error") return null;
+  // Create an error box right after the success box (or the form) if the
+  // page doesn't already have one.
+  const box = document.createElement("div");
+  box.id = `${form.id}-error`;
+  box.className = "form-error";
+  box.setAttribute("role", "alert");
+  const anchor = statusBox(form, "success") || form;
+  anchor.insertAdjacentElement("afterend", box);
+  return box;
+}
+
+function buildMailto(form, subject) {
+  const lines = [];
+  form.querySelectorAll("[name]").forEach((field) => {
+    if (["form-name", "bot-field", "subject", "enquiry-type"].includes(field.name)) return;
+    if (field.type === "checkbox" && !field.checked) return;
+    const value = (field.value || "").toString().trim();
+    if (!value) return;
+    const label = field.id ? form.querySelector(`label[for="${field.id}"]`) : null;
+    const labelText = label ? label.textContent.trim().replace(/\s+/g, " ") : field.name;
+    lines.push(`${labelText}: ${value}`);
+  });
+  return `mailto:${CONTACT_EMAIL}` +
+    `?subject=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(lines.join("\n"))}`;
+}
+
+function subjectFor(form) {
+  const get = (name) => ((form.elements[name] && form.elements[name].value) || "").toString().trim();
+  const fullName = [get("firstName"), get("lastName")].filter(Boolean).join(" ");
+  if (form.dataset.subject) return `${form.dataset.subject}${fullName ? " — " + fullName : ""}`;
+  if (form.dataset.archive) return `Archive Enquiry — ${form.dataset.film || "Archive"}`;
+  if (form.dataset.festival) {
+    const filmTitle = get("filmTitle");
+    return `${form.dataset.festival} Collection Submission${filmTitle ? " — " + filmTitle : ""}`;
+  }
+  return `Message from ${fullName}`.trim();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll("form[data-signup]").forEach((form) => {
+  // Netlify strips data-netlify / netlify-honeypot from the deployed HTML,
+  // so find site forms by their hidden form-name input instead.
+  document.querySelectorAll("form").forEach((form) => {
+    if (!form.querySelector('input[name="form-name"]')) return;
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      if (!formIsValid(form)) return;
 
-      const recipient = form.dataset.signup || "normalshoeseditions@gmail.com";
-      const festival = form.dataset.festival || "Normal Shoes";
-      const data = new FormData(form);
+      const success = statusBox(form, "success");
+      const error = statusBox(form, "error");
+      if (success) success.classList.remove("is-visible");
+      if (error) error.classList.remove("is-visible");
 
-      const filmTitle = (data.get("filmTitle") || "").toString().trim();
-      const fullName = [data.get("firstName"), data.get("lastName")]
-        .map((v) => (v || "").toString().trim())
-        .filter(Boolean)
-        .join(" ");
-      const subject = form.dataset.subject
-        ? `${form.dataset.subject}${fullName ? " — " + fullName : ""}`
-        : `${festival} Collection Submission${filmTitle ? " — " + filmTitle : ""}`;
-      if (form.elements.subject) data.set("subject", subject);
+      const subject = subjectFor(form);
+      const overrides = form.elements.subject ? { subject } : {};
+      const submitBtn = form.querySelector('[type="submit"]');
+      const btnText = submitBtn ? submitBtn.textContent : "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending…";
+      }
 
-      const showSuccess = () => {
-        const success = document.querySelector(`#${form.id}-success`);
-        if (success) {
-          success.classList.add("is-visible");
-        }
-        form.reset();
-      };
-
-      const sendMailtoFallback = () => {
-        const lines = [];
-        form.querySelectorAll("[name]").forEach((field) => {
-          if (["form-name", "bot-field", "subject"].includes(field.name)) return;
-          const value = (data.get(field.name) || "").toString().trim();
-          if (!value) return;
-          const label = form.querySelector(`label[for="${field.id}"]`);
-          const labelText = label ? label.textContent.trim() : field.name;
-          lines.push(`${labelText}: ${value}`);
-        });
-
-        window.location.href =
-          `mailto:${recipient}` +
-          `?subject=${encodeURIComponent(subject)}` +
-          `&body=${encodeURIComponent(lines.join("\n"))}`;
-
-        showSuccess();
+      const showError = () => {
+        if (!error) return;
+        error.innerHTML =
+          "Sorry, that didn't send. Please email us at " +
+          `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>` +
+          " — or <a class=\"js-mailto\" href=\"#\">open a pre-filled email</a> with the details you entered.";
+        const prefilled = error.querySelector(".js-mailto");
+        if (prefilled) prefilled.href = buildMailto(form, subject);
+        error.classList.add("is-visible");
       };
 
       fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(data).toString(),
+        body: encodeFormData(form, overrides),
       })
         .then((response) => {
-          if (!response.ok) throw new Error("Form submission failed");
-          showSuccess();
+          if (!response.ok) throw new Error(`Form submission failed (${response.status})`);
+          if (success) success.classList.add("is-visible");
+          form.reset();
         })
-        .catch(sendMailtoFallback);
+        .catch(showError)
+        .finally(() => {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = btnText;
+          }
+        });
     });
   });
 });
 
-// Archive enquiry forms -> Netlify Forms, with a mailto fallback if that fails
+// Looping video: only download/play it once it's near the viewport, so it
+// doesn't compete with the page's main content on mobile.
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll("form[data-archive]").forEach((form) => {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const recipient = form.dataset.recipient || "normalshoeseditions@gmail.com";
-      const filmTitle = form.dataset.film || "Archive";
-      const data = new FormData(form);
-
-      const showSuccess = () => {
-        const success = document.querySelector(`#${form.id}-success`);
-        if (success) {
-          success.classList.add("is-visible");
-        }
-        form.reset();
-      };
-
-      const sendMailtoFallback = () => {
-        const lines = [];
-        form.querySelectorAll("[name]").forEach((field) => {
-          if (field.name === "form-name" || field.name === "bot-field") return;
-          const value = (data.get(field.name) || "").toString().trim();
-          if (!value) return;
-          const label = form.querySelector(`label[for="${field.id}"]`);
-          const labelText = label ? label.textContent.trim() : field.name;
-          lines.push(`${labelText}: ${value}`);
-        });
-
-        const subject = `Archive Enquiry — ${filmTitle}`;
-
-        window.location.href =
-          `mailto:${recipient}` +
-          `?subject=${encodeURIComponent(subject)}` +
-          `&body=${encodeURIComponent(lines.join("\n"))}`;
-
-        showSuccess();
-      };
-
-      fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(data).toString(),
-      })
-        .then((response) => {
-          if (!response.ok) throw new Error("Form submission failed");
-          showSuccess();
-        })
-        .catch(sendMailtoFallback);
+  const videos = document.querySelectorAll("video[data-autoplay-inview]");
+  if (!videos.length) return;
+  const play = (v) => {
+    const p = v.play();
+    if (p && typeof p.catch === "function") p.catch(() => {});
+  };
+  if (!("IntersectionObserver" in window)) {
+    videos.forEach(play);
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) play(entry.target);
+      else if (!entry.target.paused) entry.target.pause();
     });
-  });
+  }, { rootMargin: "200px 0px" });
+  videos.forEach((v) => io.observe(v));
 });
 
 // Hastings Rocks: consent popup before film submission + pre-order window
 document.addEventListener("DOMContentLoaded", () => {
+  // Must match the Submission Requirements page: registering interest never
+  // grants rights — a separate written agreement is always needed.
   const PERMISSION_TEXT =
-    "I give Normal Shoes pre-requisite permission to include the film in the Hastings Rocks compilation.";
+    "I understand that registering interest does not grant any rights to my film, and that a separate written agreement is required before it can be included in the Hastings Rocks compilation.";
 
   const closeOnBackdrop = (dialog) => {
     dialog.addEventListener("click", (e) => {
@@ -250,9 +251,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const consentDialog = document.querySelector("#hriff-permission-dialog");
   if (submitForm && submitBtn && consentDialog) {
     const permissionField = document.querySelector("#hriffPermission");
+    const ackBox = consentDialog.querySelector("#hriff-permission-ack");
+    const agreeBtn = consentDialog.querySelector("#hriff-permission-agree");
+    const syncAgree = () => {
+      if (agreeBtn && ackBox) agreeBtn.disabled = !ackBox.checked;
+    };
+    if (ackBox) ackBox.addEventListener("change", syncAgree);
 
     submitBtn.addEventListener("click", () => {
-      if (!submitForm.reportValidity()) return;
+      if (!formIsValid(submitForm)) return;
+      if (ackBox) ackBox.checked = false;
+      syncAgree();
       consentDialog.showModal();
     });
 
@@ -260,7 +269,8 @@ document.addEventListener("DOMContentLoaded", () => {
       consentDialog.close();
     });
 
-    consentDialog.querySelector("#hriff-permission-agree").addEventListener("click", () => {
+    agreeBtn.addEventListener("click", () => {
+      if (ackBox && !ackBox.checked) return;
       if (permissionField) permissionField.value = PERMISSION_TEXT;
       consentDialog.close();
       submitForm.requestSubmit();
@@ -274,8 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const preDialog = document.querySelector("#hriff-preorder-dialog");
   if (preDialog) {
     const openPreorder = () => {
-      const success = preDialog.querySelector(".form-success");
-      if (success) success.classList.remove("is-visible");
+      preDialog.querySelectorAll(".form-success, .form-error").forEach((el) => el.classList.remove("is-visible"));
       if (!preDialog.open) preDialog.showModal();
     };
 

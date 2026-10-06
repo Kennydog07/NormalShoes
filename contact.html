@@ -23,7 +23,7 @@
   <header class="site-header">
     <div class="wrap">
       <a aria-label='Normal Shoes — home' class='logo logo-mark' href='/'>
-        <img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296">
+        <picture><source type="image/webp" srcset="/assets/normal-shoes-logo-240.webp" /><img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296"></picture>
       </a>
       <nav class="main-nav" aria-label="Primary">
         <ul>
@@ -77,7 +77,7 @@
     <section class="section-border">
       <div class="wrap split">
         <figure class="panel panel-image">
-          <img src="assets/cal-dalglish-disc-tray.jpg" alt="A finished disc seated in its case" />
+          <picture><source type="image/webp" srcset="assets/cal-dalglish-disc-tray-400.webp 400w, assets/cal-dalglish-disc-tray-800.webp 800w, assets/cal-dalglish-disc-tray-1200.webp 1200w" sizes="(max-width: 820px) 88vw, 520px" /><img src="assets/cal-dalglish-disc-tray-800.jpg" alt="A finished disc seated in its case" width="800" height="1066" /></picture>
           <figcaption>Every Disc, Checked Before It Ships</figcaption>
         </figure>
         <div>
@@ -94,22 +94,22 @@
 
     <section>
       <div class="wrap">
-        <form id="contact-form" class="form-grid" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+        <form id="contact-form" class="form-grid" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
           <input type="hidden" name="form-name" value="contact" />
           <p style="position:absolute; left:-9999px;">
             <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
           </p>
           <div class="field">
             <label for="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName" required />
+            <input type="text" id="firstName" name="firstName" autocomplete="given-name" required />
           </div>
           <div class="field">
             <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" name="lastName" required />
+            <input type="text" id="lastName" name="lastName" autocomplete="family-name" required />
           </div>
           <div class="field">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" required />
+            <input type="email" id="email" name="email" autocomplete="email" required />
           </div>
           <div class="field">
             <label for="institution">Institution / Course (optional)</label>
@@ -135,15 +135,18 @@
         </form>
 
         <p class="form-note">
-          Submitting this form sends your details straight to us at
-          normalshoeseditions@gmail.com.
+          Submitting this form sends your details to us (via our website host,
+          Netlify) and to our inbox at normalshoeseditions@gmail.com. We only use
+          them to reply to your message. See our <a href="/privacy">Privacy Policy</a> for how we
+          handle your information and your rights.
         </p>
 
-        <div id="form-success" class="form-success">
+        <div id="contact-form-success" class="form-success" role="status">
           Thanks — your message is on its way. If anything looks wrong,
           email us directly at
           <a href="mailto:normalshoeseditions@gmail.com" style="text-decoration:underline;">normalshoeseditions@gmail.com</a>.
         </div>
+        <div id="contact-form-error" class="form-error" role="alert"></div>
 
         <div class="contact-strip">
           <div class="item">
@@ -166,7 +169,7 @@
   <footer class="site-footer">
     <div class="wrap">
       <div class="foot-logo logo-mark">
-        <img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296">
+        <picture><source type="image/webp" srcset="/assets/normal-shoes-logo-240.webp" /><img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296" loading="lazy" decoding="async"></picture>
       </div>
       <ul class="foot-links">
         <li><a href='/'>Home</a></li>
@@ -177,9 +180,12 @@
         <li><a href='/package-tiers'>Package Tiers</a></li>
         <li><a href='/archive'>Archive</a></li>
         <li><a href='/contact'>Contact Us</a></li>
+        <li><a href='/privacy'>Privacy</a></li>
+        <li><a href='/terms'>Terms</a></li>
         <li><a href="mailto:normalshoeseditions@gmail.com">normalshoeseditions@gmail.com</a></li>
         <li><a href="https://www.instagram.com/normalshoeseditions/" target="_blank" rel="noopener">Instagram</a></li>
       </ul>
+      <p class="business-details">Normal Shoes &middot; Flat 113, Mariner Point, 83 Brighton Road, Shoreham-by-Sea, BN43 6DH &middot; <a href="mailto:normalshoeseditions@gmail.com">normalshoeseditions@gmail.com</a></p>
       <p class="copyright">&copy; 2026 Normal Shoes. All rights reserved.</p>
     </div>
   </footer>
