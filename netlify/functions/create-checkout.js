@@ -27,7 +27,9 @@ exports.handler = async (event) => {
     return reply(405, { error: "Method not allowed" });
   }
 
-  const secretKey = process.env.STRIPE_SECRET_KEY;
+  // STRIPE_SECRET_KET is the misspelled name the key was first saved under in
+  // Netlify; accepted too so payments work until the variable is renamed.
+  const secretKey = process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KET;
   const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
   if (!secretKey || !publishableKey) {
     return reply(503, { error: "Card payments are not set up yet." });
