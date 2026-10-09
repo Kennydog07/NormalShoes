@@ -89,9 +89,13 @@ function encodeFormData(form, overrides) {
 
 // Native validation does most of the work; this is a safety net that also
 // blocks whitespace-only answers and works even if `novalidate` is present.
+// Fields inside an order declaration ([data-declaration]) get inline error
+// messages instead (see validateDeclaration below).
 function formIsValid(form) {
+  const declarationErrors = validateDeclaration(form);
   let firstInvalid = null;
   form.querySelectorAll("[required]").forEach((field) => {
+    if (field.closest("[data-declaration]")) return;
     if (field.type === "checkbox") {
       field.setCustomValidity(field.checked ? "" : "Please tick this box to continue.");
     } else if (typeof field.value === "string") {
@@ -99,13 +103,192 @@ function formIsValid(form) {
     }
     if (!field.checkValidity() && !firstInvalid) firstInvalid = field;
   });
-  if (firstInvalid) {
-    form.reportValidity();
+  const firstDeclarationError = declarationErrors[0] || null;
+  if (firstInvalid && (!firstDeclarationError ||
+      firstInvalid.compareDocumentPosition(firstDeclarationError) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+    firstInvalid.reportValidity();
     firstInvalid.focus();
+    return false;
+  }
+  if (firstDeclarationError) {
+    firstDeclarationError.focus();
     return false;
   }
   return true;
 }
+
+// ---- Order declaration (contact page) -------------------------------------
+// Inline, accessible errors: each message is linked to its field(s) with
+// aria-describedby and the first problem gets focus. Disabled (hidden)
+// declaration fields are skipped, so general enquiries aren't blocked.
+
+const DECLARATION_MESSAGES = {
+  checkbox: "Please tick this box to confirm.",
+  radio: "Please choose one option.",
+  number: "Please enter a whole number of 1 or more.",
+  date: "Please enter the date.",
+  signature: "Please type your full name as your signature.",
+  text: "Please fill in this field.",
+  intendedUse: "Please tick at least one intended use.",
+  retailReady: "Public sale or hire needs BBFC classification — please tick this box to choose the Retail-ready service, or untick D.",
+};
+
+function errorFor(field, anchor) {
+  const id = `${field.id || field.name}-error`;
+  let el = document.getElementById(id);
+  if (!el) {
+    el = document.createElement("p");
+    el.id = id;
+    el.className = "field-error";
+    el.hidden = true;
+    anchor.insertAdjacentElement("beforeend", el);
+  }
+  return el;
+}
+
+function setFieldError(targets, anchor, message) {
+  const box = errorFor(targets[0], anchor);
+  box.textContent = message || "";
+  box.hidden = !message;
+  targets.forEach((t) => {
+    const ids = (t.getAttribute("aria-describedby") || "").split(/\s+/).filter((x) => x && x !== box.id);
+    if (message) {
+      ids.push(box.id);
+      t.setAttribute("aria-invalid", "true");
+    } else {
+      t.removeAttribute("aria-invalid");
+    }
+    if (ids.length) t.setAttribute("aria-describedby", ids.join(" "));
+    else t.removeAttribute("aria-describedby");
+  });
+}
+
+function validateDeclaration(form) {
+  const decl = form.querySelector("[data-declaration]");
+  if (!decl) return [];
+  const errors = [];
+  const active = !decl.hidden;
+  const seenRadio = new Set();
+
+  // "At least one" checkbox groups (intended use)
+  decl.querySelectorAll("[data-require-one]").forEach((group) => {
+    const boxes = Array.from(group.querySelectorAll('input[type="checkbox"][name="intendedUse"]'));
+    if (!boxes.length) return;
+    const ok = !active || group.disabled || boxes.some((b) => b.checked);
+    const anchor = group.querySelector(".retail-notice") ? boxesAnchor(group) : group;
+    setFieldError(boxes, anchor, ok ? "" : DECLARATION_MESSAGES.intendedUse);
+    if (!ok) errors.push(boxes[0]);
+  });
+
+  decl.querySelectorAll("[required]").forEach((field) => {
+    let message = "";
+    if (field.type === "radio") {
+      if (seenRadio.has(field.name)) return;
+      seenRadio.add(field.name);
+      const radios = Array.from(decl.querySelectorAll(`input[type="radio"][name="${field.name}"]`));
+      const group = field.closest("fieldset");
+      if (active && !field.disabled && !radios.some((r) => r.checked)) message = DECLARATION_MESSAGES.radio;
+      setFieldError(radios, group, message);
+      if (message) errors.push(radios[0]);
+      return;
+    }
+    if (active && !field.disabled) {
+      if (field.type === "checkbox") {
+        if (!field.checked) message = field.id === "retailReady" ? DECLARATION_MESSAGES.retailReady : DECLARATION_MESSAGES.checkbox;
+      } else if (!field.value.trim()) {
+        message = field.id === "signature" ? DECLARATION_MESSAGES.signature
+          : (DECLARATION_MESSAGES[field.type] || DECLARATION_MESSAGES.text);
+      } else if (!field.checkValidity()) {
+        message = DECLARATION_MESSAGES[field.type] || DECLARATION_MESSAGES.text;
+      }
+    }
+    setFieldError([field], field.closest(".consent-field, .field") || field.parentElement, message);
+    if (message) errors.push(field);
+  });
+
+  return errors.sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+}
+
+// The intended-use error sits straight after the A–D boxes, before the
+// Retail-ready notice.
+function boxesAnchor(group) {
+  let holder = group.querySelector(".use-error-anchor");
+  if (!holder) {
+    holder = document.createElement("div");
+    holder.className = "use-error-anchor";
+    group.querySelector(".retail-notice").insertAdjacentElement("beforebegin", holder);
+  }
+  return holder;
+}
+
+// Multiple ticked uses are sent as one readable field: "A. Private; D. ...".
+function declarationOverrides(form) {
+  const boxes = Array.from(form.querySelectorAll('input[name="intendedUse"]:checked:not(:disabled)'));
+  return boxes.length ? { intendedUse: boxes.map((b) => b.value).join("; ") } : {};
+}
+
+function todayISO() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("#contact-form");
+  const decl = form && form.querySelector("[data-declaration]");
+  if (!decl) return;
+
+  // We show our own inline errors for the declaration.
+  form.noValidate = true;
+
+  const typeRadios = form.querySelectorAll('input[name="enquiryType"]');
+  const groups = decl.querySelectorAll("fieldset.declaration-group");
+  const useD = decl.querySelector("#useD");
+  const notice = decl.querySelector("#retail-notice p");
+  const retailField = decl.querySelector("#retail-ready-field");
+  const retailBox = decl.querySelector("#retailReady");
+  const dateField = decl.querySelector("#signatureDate");
+
+  const setDate = () => {
+    if (dateField && !dateField.value) dateField.value = todayISO();
+  };
+
+  const syncRetail = () => {
+    const on = !!(useD && useD.checked);
+    if (notice) notice.hidden = !on;
+    if (retailField) retailField.hidden = !on;
+    if (retailBox) {
+      retailBox.disabled = !on;
+      if (!on) retailBox.checked = false;
+    }
+  };
+
+  const syncType = () => {
+    const ordering = !!form.querySelector('input[name="enquiryType"][value="Place a disc order"]:checked');
+    decl.hidden = !ordering;
+    groups.forEach((g) => (g.disabled = !ordering));
+    if (ordering) setDate();
+    syncRetail();
+    // Clear stale errors when hidden; refresh them if some are already shown.
+    if (!ordering || decl.querySelector(".field-error:not([hidden])")) validateDeclaration(form);
+  };
+
+  typeRadios.forEach((r) => r.addEventListener("change", syncType));
+  if (useD) useD.addEventListener("change", syncRetail);
+
+  // Clear a field's inline error as soon as it's fixed.
+  decl.addEventListener("change", () => {
+    if (decl.querySelector('.field-error:not([hidden])')) validateDeclaration(form);
+  });
+  decl.addEventListener("input", () => {
+    if (decl.querySelector('.field-error:not([hidden])')) validateDeclaration(form);
+  });
+
+  // form.reset() after a successful send returns to "General enquiry".
+  form.addEventListener("reset", () => setTimeout(syncType, 0));
+
+  syncType();
+});
 
 function statusBox(form, kind) {
   const ids = kind === "success"
@@ -131,7 +314,8 @@ function buildMailto(form, subject) {
   const lines = [];
   form.querySelectorAll("[name]").forEach((field) => {
     if (["form-name", "bot-field", "subject", "enquiry-type"].includes(field.name)) return;
-    if (field.type === "checkbox" && !field.checked) return;
+    if ((field.type === "checkbox" || field.type === "radio") && !field.checked) return;
+    if (field.disabled) return;
     const value = (field.value || "").toString().trim();
     if (!value) return;
     const label = field.id ? form.querySelector(`label[for="${field.id}"]`) : null;
@@ -170,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (error) error.classList.remove("is-visible");
 
       const subject = subjectFor(form);
-      const overrides = form.elements.subject ? { subject } : {};
+      const overrides = Object.assign(form.elements.subject ? { subject } : {}, declarationOverrides(form));
       const submitBtn = form.querySelector('[type="submit"]');
       const btnText = submitBtn ? submitBtn.textContent : "";
       if (submitBtn) {
