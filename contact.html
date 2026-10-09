@@ -99,6 +99,23 @@
           <p style="position:absolute; left:-9999px;">
             <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
           </p>
+          <fieldset class="field full choice-group" id="enquiry-type-group">
+            <legend>Enquiry type</legend>
+            <div class="choice-row">
+              <div class="consent-field">
+                <label class="checkbox" for="enquiryTypeGeneral">
+                  <input type="radio" id="enquiryTypeGeneral" name="enquiryType" value="General enquiry" aria-controls="order-declaration" checked />
+                  <span>General enquiry</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="enquiryTypeOrder">
+                  <input type="radio" id="enquiryTypeOrder" name="enquiryType" value="Place a disc order" aria-controls="order-declaration" />
+                  <span>Place a disc order</span>
+                </label>
+              </div>
+            </div>
+          </fieldset>
           <div class="field">
             <label for="firstName">First Name</label>
             <input type="text" id="firstName" name="firstName" autocomplete="given-name" required />
@@ -129,6 +146,172 @@
             <label for="message">Tell us about your film</label>
             <textarea id="message" name="message" placeholder="Runtime, format, number of films, deadline — whatever's useful." required></textarea>
           </div>
+          <section class="full bbfc-statement" id="bbfc" aria-labelledby="bbfc-heading">
+            <div class="section-head">
+              <h2 id="bbfc-heading">BBFC and the Video Recordings Act 1984</h2>
+            </div>
+            <p>Normal Shoes masters and manufactures discs on behalf of filmmakers, production companies, festivals and educational institutions. Unless a customer chooses our Retail-ready service, discs are supplied on the basis that they are for private, archival, submission or non-commercial use. They are not classified by the BBFC and are clearly marked as such.</p>
+            <p>Under UK law, video works sold, hired or otherwise supplied to the public on disc must usually be classified by the BBFC and labelled accordingly. If you plan to sell or distribute your film to the public, choose our Retail-ready service, and we will manage BBFC submission and labelling for you. Classification fees are charged at cost.</p>
+            <p>Every order requires a signed Order Declaration. We may decline or pause any order where the intended use appears to require classification.</p>
+          </section>
+
+          <div class="full declaration" id="order-declaration" data-declaration hidden>
+            <h3 class="declaration-title">Order declaration</h3>
+            <p class="declaration-intro">Please read <a href="#bbfc">BBFC and the Video Recordings Act 1984</a> above before completing this declaration.</p>
+
+            <fieldset class="declaration-group" disabled>
+              <legend>Your order</legend>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="organisation">Organisation (optional)</label>
+                  <input type="text" id="organisation" name="organisation" autocomplete="organization" />
+                </div>
+                <div class="field">
+                  <label for="phone">Phone (optional)</label>
+                  <input type="tel" id="phone" name="phone" autocomplete="tel" />
+                </div>
+                <div class="field">
+                  <label for="orderReference">Order reference (optional)</label>
+                  <input type="text" id="orderReference" name="orderReference" />
+                </div>
+                <div class="field">
+                  <label for="filmTitle">Film title</label>
+                  <input type="text" id="filmTitle" name="filmTitle" required />
+                </div>
+                <div class="field">
+                  <label for="runningTime">Running time (minutes)</label>
+                  <input type="number" id="runningTime" name="runningTimeMinutes" min="1" step="1" inputmode="numeric" required />
+                </div>
+                <div class="field">
+                  <label for="discCount">Number of discs</label>
+                  <input type="number" id="discCount" name="numberOfDiscs" min="1" step="1" inputmode="numeric" required />
+                </div>
+                <fieldset class="field full choice-group" id="format-group">
+                  <legend>Format</legend>
+                  <div class="choice-row">
+                    <div class="consent-field">
+                      <label class="checkbox" for="formatDvd">
+                        <input type="radio" id="formatDvd" name="discFormat" value="DVD" required />
+                        <span>DVD</span>
+                      </label>
+                    </div>
+                    <div class="consent-field">
+                      <label class="checkbox" for="formatBluray">
+                        <input type="radio" id="formatBluray" name="discFormat" value="Blu-ray" required />
+                        <span>Blu-ray</span>
+                      </label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </fieldset>
+
+            <fieldset class="declaration-group choice-list" id="intended-use-group" data-require-one disabled>
+              <legend>Intended use</legend>
+              <p class="declaration-hint">Tick every use that applies.</p>
+              <div class="consent-field">
+                <label class="checkbox" for="useA">
+                  <input type="checkbox" id="useA" name="intendedUse" value="A. Private" />
+                  <span><strong>A. Private</strong> — for my own archive or portfolio, or to give free of charge to cast, crew, family or friends.</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="useB">
+                  <input type="checkbox" id="useB" name="intendedUse" value="B. Submission &amp; screening" />
+                  <span><strong>B. Submission &amp; screening</strong> — for festivals, competitions, awards, or screening at a licensed venue.</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="useC">
+                  <input type="checkbox" id="useC" name="intendedUse" value="C. Trade / institution" />
+                  <span><strong>C. Trade / institution</strong> — supplied to a production company, distributor, broadcaster, university or similar organisation, and not for sale or hire to the public.</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="useD">
+                  <input type="checkbox" id="useD" name="intendedUse" value="D. Public sale or hire" />
+                  <span><strong>D. Public sale or hire</strong> — to be sold, hired or distributed to the public (online, in shops, at screenings or events).</span>
+                </label>
+              </div>
+              <div class="retail-notice" id="retail-notice" aria-live="polite">
+                <p hidden>Public sale or hire requires BBFC classification. We'll handle this through our Retail-ready service — BBFC fees are charged at cost (2026 standard rate £9.66 per minute, £96.60 minimum for works under 10 minutes, plus £50 transcode and £36.86 packaging, all ex VAT).</p>
+              </div>
+              <div class="consent-field" id="retail-ready-field" hidden>
+                <label class="checkbox" for="retailReady">
+                  <input type="checkbox" id="retailReady" name="retailReady" value="Yes — I want the Retail-ready service with BBFC classification" required disabled />
+                  <span>I want the Retail-ready service with BBFC classification.</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="declaration-group choice-list" disabled>
+              <legend>I confirm that</legend>
+              <div class="consent-field">
+                <label class="checkbox" for="confirmAccurate">
+                  <input type="checkbox" id="confirmAccurate" name="confirmAccurate" value="Yes — The information above is accurate, and the discs will be used only as ticked." required />
+                  <span>The information above is accurate, and the discs will be used only as ticked.</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="confirmNoSaleOrHire">
+                  <input type="checkbox" id="confirmNoSaleOrHire" name="confirmNoSaleOrHire" value="Yes — Unless I have chosen Retail-ready, I will not sell, hire, exchange or loan these discs for reward, or supply them to the public as part of any business." required />
+                  <span>Unless I have chosen Retail-ready, I will not sell, hire, exchange or loan these discs for reward, or supply them to the public as part of any business.</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="confirmFreeCopies">
+                  <input type="checkbox" id="confirmFreeCopies" name="confirmFreeCopies" value="Yes — Any copies I give away will be free of charge and not as part of a business or promotion." required />
+                  <span>Any copies I give away will be free of charge and not as part of a business or promotion.</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="confirmMarking">
+                  <input type="checkbox" id="confirmMarking" name="confirmMarking" value="Yes — I will not remove, cover or alter the &quot;Not classified by the BBFC&quot; marking, and I will not add any age-rating symbol." required />
+                  <span>I will not remove, cover or alter the "Not classified by the BBFC" marking, and I will not add any age-rating symbol.</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="confirmNotifyChanges">
+                  <input type="checkbox" id="confirmNotifyChanges" name="confirmNotifyChanges" value="Yes — If my plans change to include public sale or hire, I will tell Normal Shoes before distributing, so that classification can be arranged." required />
+                  <span>If my plans change to include public sale or hire, I will tell Normal Shoes before distributing, so that classification can be arranged.</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="confirmRights">
+                  <input type="checkbox" id="confirmRights" name="confirmRights" value="Yes — I own, or have permission to use, all rights in the film, including music, footage, artwork and performances, and I authorise Normal Shoes to reproduce it." required />
+                  <span>I own, or have permission to use, all rights in the film, including music, footage, artwork and performances, and I authorise Normal Shoes to reproduce it.</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="confirmLawful">
+                  <input type="checkbox" id="confirmLawful" name="confirmLawful" value="Yes — The film contains nothing unlawful." required />
+                  <span>The film contains nothing unlawful.</span>
+                </label>
+              </div>
+              <div class="consent-field">
+                <label class="checkbox" for="confirmMayDecline">
+                  <input type="checkbox" id="confirmMayDecline" name="confirmMayDecline" value="Yes — Normal Shoes may decline or pause an order if the intended use appears to need BBFC classification." required />
+                  <span>Normal Shoes may decline or pause an order if the intended use appears to need BBFC classification.</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="declaration-group" disabled>
+              <legend>Signature</legend>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="signature">Type your full name as your signature</label>
+                  <input type="text" id="signature" name="signature" autocomplete="name" required />
+                </div>
+                <div class="field">
+                  <label for="signatureDate">Date</label>
+                  <input type="date" id="signatureDate" name="signatureDate" required />
+                </div>
+              </div>
+              <p class="declaration-hint">If you're ordering for an organisation, this must be signed by an authorised representative.</p>
+            </fieldset>
+          </div>
+
           <div class="field full">
             <button type="submit" class="btn btn-primary">Send Message</button>
           </div>
@@ -186,6 +369,7 @@
         <li><a href="https://www.instagram.com/normalshoeseditions/" target="_blank" rel="noopener">Instagram</a></li>
       </ul>
       <p class="business-details">Normal Shoes &middot; Flat 113, Mariner Point, 83 Brighton Road, Shoreham-by-Sea, BN43 6DH &middot; <a href="mailto:normalshoeseditions@gmail.com">normalshoeseditions@gmail.com</a></p>
+      <p class="classification-note">Discs are supplied unclassified for private and non-commercial use unless ordered through our Retail-ready service. See <a href="/contact">Enquire</a> for details.</p>
       <p class="copyright">&copy; 2026 Normal Shoes. All rights reserved.</p>
     </div>
   </footer>

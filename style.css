@@ -1118,7 +1118,9 @@ dialog.preorder-dialog [hidden],
 .order-details a,
 .preorder-terms a,
 .consent-field a,
-.business-details a { text-decoration: underline; }
+.business-details a,
+.classification-note a,
+.declaration-intro a { text-decoration: underline; }
 
 .consent-field label.checkbox {
   display: flex;
@@ -1132,7 +1134,8 @@ dialog.preorder-dialog [hidden],
   cursor: pointer;
 }
 
-.consent-field input[type="checkbox"] {
+.consent-field input[type="checkbox"],
+.consent-field input[type="radio"] {
   width: 18px;
   height: 18px;
   flex-shrink: 0;
@@ -1191,6 +1194,15 @@ dialog.disclaimer-dialog .consent-field { margin: 0 0 1.75rem; }
 }
 
 .site-footer .business-details + .copyright { margin-top: 0.25rem; }
+
+.site-footer .classification-note {
+  font-size: 0.78rem;
+  color: var(--muted);
+  width: 100%;
+  margin: 0;
+}
+
+.site-footer .classification-note + .copyright { margin-top: 0.25rem; }
 
 /* ---- Legal pages (privacy / terms) -------------------------------------- */
 
@@ -1259,3 +1271,113 @@ dialog.disclaimer-dialog .consent-field { margin: 0 0 1.75rem; }
 
 dialog.disclaimer-dialog .order-details p { margin: 0.5rem 0 0; }
 dialog.disclaimer-dialog .order-details p + p { margin-top: 0.75rem; }
+
+/* ---- Contact: BBFC statement & order declaration ------------------------ */
+
+:root { --error: #b3261e; }
+:root[data-theme="dark"] { --error: #ff8a80; }
+
+.form-grid fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.choice-group legend,
+.declaration-group legend {
+  padding: 0;
+}
+
+.choice-group legend {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.85rem;
+}
+
+.choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+}
+
+.bbfc-statement {
+  padding: 2.5rem 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.bbfc-statement .section-head { margin-bottom: 1.25rem; }
+
+.bbfc-statement p {
+  font-size: 1.05rem;
+  max-width: 62ch;
+  margin: 0;
+}
+
+.bbfc-statement p + p { margin-top: 1.2rem; }
+
+.declaration[hidden] { display: none !important; }
+
+.declaration {
+  display: grid;
+  gap: 2.25rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.declaration-title {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  margin: 0;
+}
+
+.declaration-title + .declaration-intro { margin-top: -1.5rem; }
+
+.declaration-intro,
+.declaration-hint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  max-width: 62ch;
+}
+
+.declaration-group > legend {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 1.2rem;
+  margin-bottom: 1.25rem;
+}
+
+.declaration-group .form-grid { gap: 1.75rem 2rem; }
+
+.choice-list > .consent-field + .consent-field,
+.choice-list > .declaration-hint + .consent-field { margin-top: 0.9rem; }
+
+.choice-list > .declaration-hint { margin-bottom: 0.25rem; }
+
+.declaration-group > .form-grid + .declaration-hint { margin-top: 1.25rem; }
+
+.retail-notice p {
+  margin: 1.25rem 0 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line);
+  background: var(--paper-dim);
+  font-size: 0.92rem;
+  max-width: 62ch;
+}
+
+.retail-notice + .consent-field { margin-top: 1rem; }
+
+.field-error {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--error);
+}
+
+.field-error[hidden] { display: none; }
+
+.field input[aria-invalid="true"] { border-bottom-color: var(--error); }
