@@ -287,6 +287,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // form.reset() after a successful send returns to "General enquiry".
   form.addEventListener("reset", () => setTimeout(syncType, 0));
 
+  // Pre-select an enquiry type from the URL, e.g. /contact?enquiry=disc-lab
+  const wanted = new URLSearchParams(window.location.search).get("enquiry");
+  const map = { "disc-lab": "enquiryTypeDiscLab", order: "enquiryTypeOrder" };
+  const pre = wanted && map[wanted] && document.getElementById(map[wanted]);
+  if (pre) pre.checked = true;
+
   syncType();
 });
 

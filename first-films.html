@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Normal Shoes: the festival of first films — Normal Shoes</title>
+  <meta name="description" content="Normal Shoes: the festival of first films in Worthing, twice a year: a spring competition of debut and graduation films, and an autumn edition with Shot on Film and Coast." />
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("normal-shoes-theme");
+        var theme = stored === "dark" || stored === "light"
+          ? stored
+          : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a aria-label='Normal Shoes — home' class='logo logo-mark' href='/'>
+        <picture><source type="image/webp" srcset="/assets/normal-shoes-logo-240.webp" /><img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296"></picture>
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <ul>
+          <li><a href='/'>Home</a></li>
+          <li><a href='/about'>About</a></li>
+          <li><a href='/brighton-rocks'>Brighton Rocks</a></li>
+          <li><a href='/hastings-rocks'>Hastings Rocks</a></li>
+          <li><a href='/submission-requirements'>Submission Requirements</a></li>
+          <li><a href='/package-tiers'>Package Tiers</a></li>
+          <li><a href='/disc-lab'>Disc Lab</a></li>
+          <li><a href='/archive'>Archive</a></li>
+          <li><a href='/first-films'>First Films</a></li>
+          <li><a href='/contact'>Contact Us</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+        <svg class="icon-sun" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <line x1="12" y1="2" x2="12" y2="4"></line>
+          <line x1="12" y1="20" x2="12" y2="22"></line>
+          <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line>
+          <line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line>
+          <line x1="2" y1="12" x2="4" y2="12"></line>
+          <line x1="20" y1="12" x2="22" y2="12"></line>
+          <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"></line>
+          <line x1="17.66" y1="6.34" x2="19.07" y2="4.93"></line>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="deco-shapes" aria-hidden="true">
+        <span class="deco-shape deco-circle deco-lavender" style="width:180px; height:180px; top:-60px; right:-40px;"></span>
+        <span class="deco-shape deco-triangle deco-butter" style="width:70px; height:70px; bottom:-16px; left:6%;"></span>
+        <span class="deco-shape deco-ring deco-sky" style="width:90px; height:90px; top:20px; left:-30px;"></span>
+      </div>
+      <div class="wrap">
+        <p class="eyebrow">Worthing &middot; Twice a Year</p>
+        <h1>Normal Shoes: the festival of first films</h1>
+        <p class="lede">
+          Debut and graduation films on the big screen in Worthing, twice a year. Open to filmmakers worldwide.
+        </p>
+      </div>
+    </section>
+
+    <section class="section-border">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Two Editions</h2>
+          <span class="num">01</span>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <span class="index">I.</span>
+            <h3>Spring</h3>
+            <p>The main competition of debut and graduation films. Dates: <span data-placeholder>Date TBC</span></p>
+          </div>
+          <div class="pillar">
+            <span class="index">II.</span>
+            <h3>Autumn: Shot on Film</h3>
+            <p>Films shot on Super 8, 16mm and 35mm, screened from digital scans. Dates: <span data-placeholder>Date TBC</span></p>
+          </div>
+          <div class="pillar">
+            <span class="index">III.</span>
+            <h3>Autumn: Coast</h3>
+            <p>First films about the seaside and coastal life. Dates: <span data-placeholder>Date TBC</span></p>
+          </div>
+        </div>
+        <p style="color:var(--muted); margin-top:2rem;">Venue to be announced<!-- TODO: confirm venue -->.</p>
+      </div>
+    </section>
+
+    <section class="section-border">
+      <div class="wrap editorial">
+        <h2>Who can enter</h2>
+        <div class="body">
+          <p>A director's debut short, or a graduation or final-year film, completed within the last <span data-placeholder>2 years</span>.</p><p>Open to filmmakers worldwide.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-border">
+      <div class="wrap editorial">
+        <h2>Fees and awards</h2>
+        <div class="body">
+          <p>Submission fee: <span data-placeholder>£XX</span>. Reduced student fee: <span data-placeholder>£XX</span>.</p><p>Awards: <span data-placeholder>Awards TBC</span>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-border">
+      <div class="wrap editorial">
+        <h2>The Disc Lab at the festival</h2>
+        <div class="body">
+          <p>Selected filmmakers can use the <a href="/disc-lab" style="text-decoration:underline;">Disc Lab</a> at the festival to burn their own discs, or have a nominated person who isn't connected to Normal Shoes and isn't paid to burn do it for them.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap" style="text-align:center;">
+        <div class="section-head" style="justify-content:center; text-align:center;">
+          <h2>Submit your film</h2>
+        </div>
+        <p style="color:var(--muted); font-size:1.05rem; max-width:56ch; margin:0 auto 1.5rem;">Get in touch through our contact form to submit your film or ask a question.</p>
+        <div class="cta-row" style="justify-content:center;">
+          <a class='btn btn-primary' href='/contact'>Contact Us to Submit</a>
+        </div>
+      </div>
+    </section>
+</main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-logo logo-mark">
+        <picture><source type="image/webp" srcset="/assets/normal-shoes-logo-240.webp" /><img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296" loading="lazy" decoding="async"></picture>
+      </div>
+      <ul class="foot-links">
+        <li><a href='/'>Home</a></li>
+        <li><a href='/about'>About</a></li>
+        <li><a href='/brighton-rocks'>Brighton Rocks</a></li>
+        <li><a href='/hastings-rocks'>Hastings Rocks</a></li>
+        <li><a href='/submission-requirements'>Submission Requirements</a></li>
+        <li><a href='/package-tiers'>Package Tiers</a></li>
+          <li><a href='/disc-lab'>Disc Lab</a></li>
+        <li><a href='/archive'>Archive</a></li>
+          <li><a href='/first-films'>First Films</a></li>
+        <li><a href='/contact'>Contact Us</a></li>
+        <li><a href='/privacy'>Privacy</a></li>
+        <li><a href='/terms'>Terms</a></li>
+        <li><a href="mailto:normalshoeseditions@gmail.com">normalshoeseditions@gmail.com</a></li>
+        <li><a href="https://www.instagram.com/normalshoeseditions/" target="_blank" rel="noopener">Instagram</a></li>
+      </ul>
+      <p class="business-details">Normal Shoes &middot; Flat 113, Mariner Point, 83 Brighton Road, Shoreham-by-Sea, BN43 6DH &middot; <a href="mailto:normalshoeseditions@gmail.com">normalshoeseditions@gmail.com</a></p>
+      <p class="classification-note">Discs are supplied unclassified for private and non-commercial use unless ordered through our Retail-ready service. See <a href="/contact">Enquire</a> for details.</p>
+      <p class="copyright">&copy; 2026 Normal Shoes. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
