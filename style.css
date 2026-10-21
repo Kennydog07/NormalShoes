@@ -1381,3 +1381,24 @@ dialog.disclaimer-dialog .order-details p + p { margin-top: 0.75rem; }
 .field-error[hidden] { display: none; }
 
 .field input[aria-invalid="true"] { border-bottom-color: var(--error); }
+
+/* ---- Disc Lab / nominated burner notes ---------------------------------- */
+
+.nominee-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.nominee-note a { text-decoration: underline; }
+
+.order-details .nominee-note { margin: 0 0 1rem; font-size: 0.9rem; }
+
+/* Values still to be confirmed (dates, fees, awards) */
+[data-placeholder] {
+  background: var(--shape-butter);
+  color: var(--ink);
+  padding: 0 0.3em;
+  border-radius: 3px;
+  white-space: nowrap;
+}

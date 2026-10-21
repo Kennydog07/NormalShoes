@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Disc Lab — Normal Shoes</title>
+  <meta name="description" content="Make your own discs at the Normal Shoes Disc Lab: you, or someone you nominate, burn the discs; we supply the mastered file, artwork, printed blank discs, packaging and help." />
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("normal-shoes-theme");
+        var theme = stored === "dark" || stored === "light"
+          ? stored
+          : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a aria-label='Normal Shoes — home' class='logo logo-mark' href='/'>
+        <picture><source type="image/webp" srcset="/assets/normal-shoes-logo-240.webp" /><img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296"></picture>
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <ul>
+          <li><a href='/'>Home</a></li>
+          <li><a href='/about'>About</a></li>
+          <li><a href='/brighton-rocks'>Brighton Rocks</a></li>
+          <li><a href='/hastings-rocks'>Hastings Rocks</a></li>
+          <li><a href='/submission-requirements'>Submission Requirements</a></li>
+          <li><a href='/package-tiers'>Package Tiers</a></li>
+          <li><a href='/disc-lab'>Disc Lab</a></li>
+          <li><a href='/archive'>Archive</a></li>
+          <li><a href='/first-films'>First Films</a></li>
+          <li><a href='/contact'>Contact Us</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+        <svg class="icon-sun" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <line x1="12" y1="2" x2="12" y2="4"></line>
+          <line x1="12" y1="20" x2="12" y2="22"></line>
+          <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line>
+          <line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line>
+          <line x1="2" y1="12" x2="4" y2="12"></line>
+          <line x1="20" y1="12" x2="22" y2="12"></line>
+          <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"></line>
+          <line x1="17.66" y1="6.34" x2="19.07" y2="4.93"></line>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="deco-shapes" aria-hidden="true">
+        <span class="deco-shape deco-circle deco-mint" style="width:180px; height:180px; top:-60px; right:-40px;"></span>
+        <span class="deco-shape deco-triangle deco-butter" style="width:70px; height:70px; bottom:-16px; left:6%;"></span>
+        <span class="deco-shape deco-ring deco-sky" style="width:90px; height:90px; top:20px; left:-30px;"></span>
+      </div>
+      <div class="wrap">
+        <p class="eyebrow">Make Your Own Discs</p>
+        <h1>The Disc Lab</h1>
+        <p class="lede">
+          Your discs are burnt by you, or by a person you nominate who isn't connected to Normal Shoes and isn't paid to burn. We supply everything else: the mastered disc file, artwork, printed blank discs, packaging and help.
+        </p>
+      </div>
+    </section>
+
+    <section class="section-border">
+      <div class="wrap editorial">
+        <h2>What Normal Shoes supplies</h2>
+        <div class="body">
+          <p>We master your film into a disc file, design and print your artwork, and supply printed blank discs (with nothing recorded on them) and packaging. We're on hand to help you through every step.</p><p>The one thing we don't do is press burn. The copies of your film are made by you, or by your nominated person.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-border">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>How It Works</h2>
+          <span class="num">01</span>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <span class="index">I.</span>
+            <h3>Send Your Film</h3>
+            <p>Send us your finished film. We master it into a disc file, with menus and chapters.</p>
+          </div>
+          <div class="pillar">
+            <span class="index">II.</span>
+            <h3>We Design &amp; Print</h3>
+            <p>We design your artwork and print it, along with your blank discs and packaging.</p>
+          </div>
+          <div class="pillar">
+            <span class="index">III.</span>
+            <h3>Book a Disc Lab</h3>
+            <p>Use the burning equipment at one of our festivals, or book an appointment with us.</p>
+          </div>
+          <div class="pillar">
+            <span class="index">IV.</span>
+            <h3>Burn &amp; Pack</h3>
+            <p>You, or your nominated person, burn the discs and pack them, with our help if you want it.</p>
+          </div>
+          <div class="pillar">
+            <span class="index">V.</span>
+            <h3>Take Them Home</h3>
+            <p>You leave with your finished set.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-border">
+      <div class="wrap editorial">
+        <h2>Who can burn</h2>
+        <div class="body">
+          <p><strong>You</strong> &mdash; the filmmaker, burning copies of your own film.</p><p><strong>Or someone you nominate</strong> &mdash; a person you choose, as long as they are not connected to Normal Shoes and aren't paid to burn. Tell us their name when you book.</p><p><strong>For festival collections and archives</strong>, all the filmmakers in the collection agree one nominated individual who burns the discs for the whole collection. See <a href="/submission-requirements" style="text-decoration:underline;">Submission Requirements</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-border">
+      <div class="wrap editorial">
+        <h2>What to bring</h2>
+        <div class="body">
+          <p>A film you own the rights to, including the music. If your film uses licensed music, archive footage or other third-party material, make sure you hold the rights before you book.</p><p>If someone else is burning for you, bring them along, or tell us their name in advance.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-border">
+      <div class="wrap editorial">
+        <h2>Where and what it costs</h2>
+        <div class="body">
+          <p>Burning equipment is available at our festivals, or by appointment.</p><p>The Disc Lab is part of each of our <a href="/package-tiers" style="text-decoration:underline;">package tiers</a> (Gold Tier and Director's Cut), which we quote for your film. For the Hastings Rocks Collection and archive releases, see the prices on those pages.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap" style="text-align:center;">
+        <div class="section-head" style="justify-content:center; text-align:center;">
+          <h2>Book a Disc Lab appointment</h2>
+        </div>
+        <div class="cta-row" style="justify-content:center;">
+          <a class='btn btn-primary' href='/contact?enquiry=disc-lab'>Request an Appointment</a>
+          <a class='btn btn-secondary' href='/package-tiers'>Package Tiers</a>
+        </div>
+      </div>
+    </section>
+</main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-logo logo-mark">
+        <picture><source type="image/webp" srcset="/assets/normal-shoes-logo-240.webp" /><img class="logo-img" src="/assets/normal-shoes-logo.png" alt="Normal Shoes" width="480" height="296" loading="lazy" decoding="async"></picture>
+      </div>
+      <ul class="foot-links">
+        <li><a href='/'>Home</a></li>
+        <li><a href='/about'>About</a></li>
+        <li><a href='/brighton-rocks'>Brighton Rocks</a></li>
+        <li><a href='/hastings-rocks'>Hastings Rocks</a></li>
+        <li><a href='/submission-requirements'>Submission Requirements</a></li>
+        <li><a href='/package-tiers'>Package Tiers</a></li>
+          <li><a href='/disc-lab'>Disc Lab</a></li>
+        <li><a href='/archive'>Archive</a></li>
+          <li><a href='/first-films'>First Films</a></li>
+        <li><a href='/contact'>Contact Us</a></li>
+        <li><a href='/privacy'>Privacy</a></li>
+        <li><a href='/terms'>Terms</a></li>
+        <li><a href="mailto:normalshoeseditions@gmail.com">normalshoeseditions@gmail.com</a></li>
+        <li><a href="https://www.instagram.com/normalshoeseditions/" target="_blank" rel="noopener">Instagram</a></li>
+      </ul>
+      <p class="business-details">Normal Shoes &middot; Flat 113, Mariner Point, 83 Brighton Road, Shoreham-by-Sea, BN43 6DH &middot; <a href="mailto:normalshoeseditions@gmail.com">normalshoeseditions@gmail.com</a></p>
+      <p class="classification-note">Discs are supplied unclassified for private and non-commercial use unless ordered through our Retail-ready service. See <a href="/contact">Enquire</a> for details.</p>
+      <p class="copyright">&copy; 2026 Normal Shoes. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
