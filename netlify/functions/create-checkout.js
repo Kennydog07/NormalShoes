@@ -1,105 +1,126 @@
-// Creates a Stripe Embedded Checkout session for the Hastings Rocks Collection.
+// Creates a Stripe Embedded Checkout session for a release.
 //
-// Needs two environment variables set in Netlify (Site configuration ->
-// Environment variables), then a redeploy:
-//   STRIPE_SECRET_KEY       sk_live_... (or sk_test_... for testing)
-//   STRIPE_PUBLISHABLE_KEY  pk_live_... (or pk_test_... for testing)
+// POST /api/checkout  { release: "ns-001", region: "uk" | "international", quantity: 1-3 }
 //
-// Until both are set this returns 503 and the website falls back to the
-// pre-order request form.
+// Same pattern as before: the browser sends only what it wants; the price,
+// shipping rates and edition limit are decided here from the catalogue that
+// build.js generates from releases/*.json.
+//
+// Environment variables (Netlify -> Site configuration -> Environment variables):
+//   STRIPE_SECRET_KEY       sk_test_... while building, sk_live_... after launch
+//   STRIPE_PUBLISHABLE_KEY  pk_test_... / pk_live_...
+//
+// Safety: until site.json has "launched": true, live keys are refused, so a
+// preview can never take a real payment.
 
-// Products that can be bought. The page sends only the product key; name and
-// price are decided here on the server.
-const PRODUCTS = {
-  "hastings-rocks": {
-    name: "Hastings Rocks Collection (pre-order)",
-    order: "hastings-rocks-preorder",
-  },
-  "brimful-bellies": {
-    name: "Brimful Bellies & Bad Behaviour (archive release)",
-    order: "archive-brimful-bellies",
-  },
-};
-const DEFAULT_PRODUCT = "hastings-rocks";
-const PRICE_PENCE = 1999;
-const UK_DELIVERY_PENCE = 395;
-const MAX_QUANTITY = 10;
+const { catalogue, stripe, stockFor, secretKey, isLiveKey, reply } = require("../lib/stripe");
 
-// Pinned so the session shape doesn't change underneath us.
-const STRIPE_API_VERSION = "2024-12-18.acacia";
-
-const reply = (statusCode, body) => ({
-  statusCode,
-  headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
-  body: JSON.stringify(body),
-});
+// Where Stripe sends the buyer afterwards. Only our own hosts are allowed.
+function originOf(event) {
+  const h = event.headers || {};
+  const host = (h["x-forwarded-host"] || h.host || "").toLowerCase();
+  if (/^([a-z0-9-]+\.)*normalshoes\.co\.uk$/.test(host) || /^[a-z0-9-]+(--[a-z0-9-]+)?\.netlify\.app$/.test(host)) {
+    return `https://${host}`;
+  }
+  if (/^localhost(:\d+)?$/.test(host)) return `http://${host}`;
+  return "https://www.normalshoes.co.uk";
+}
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return reply(405, { error: "Method not allowed" });
-  }
+  if (event.httpMethod !== "POST") return reply(405, { error: "Method not allowed" });
 
-  // STRIPE_SECRET_KET is the misspelled name the key was first saved under in
-  // Netlify; accepted too so payments work until the variable is renamed.
-  const secretKey = process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KET;
+  const key = secretKey();
   const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
-  if (!secretKey || !publishableKey) {
-    return reply(503, { error: "Card payments are not set up yet." });
+  if (!key || !publishableKey) return reply(503, { error: "Card payments aren't switched on yet." });
+  if (isLiveKey(key) && !catalogue.launched) {
+    return reply(503, { error: "This is a preview, so live payments are switched off." });
   }
 
-  let requested = {};
+  let input;
   try {
-    requested = JSON.parse(event.body || "{}");
-  } catch (err) {
+    input = JSON.parse(event.body || "{}");
+  } catch (e) {
     return reply(400, { error: "Bad request" });
   }
-  const productKey = requested.product || DEFAULT_PRODUCT;
-  const product = Object.prototype.hasOwnProperty.call(PRODUCTS, productKey) ? PRODUCTS[productKey] : null;
-  if (!product) return reply(400, { error: "Unknown product" });
 
-  const params = new URLSearchParams();
-  params.set("ui_mode", "embedded");
-  params.set("mode", "payment");
-  params.set("redirect_on_completion", "never");
-  params.set("billing_address_collection", "auto");
-  params.set("phone_number_collection[enabled]", "true");
+  const slug = String(input.release || "").toLowerCase();
+  const release = Object.prototype.hasOwnProperty.call(catalogue.releases, slug) ? catalogue.releases[slug] : null;
+  if (!release) return reply(400, { error: "Unknown release." });
+  if (release.status !== "preorder" && release.status !== "available") {
+    return reply(409, { error: "That one isn't on sale right now." });
+  }
+  if (/^https:\/\//.test(release.stripe)) return reply(409, { error: "Please use the buy link on the release page." });
 
-  params.set("line_items[0][quantity]", "1");
-  params.set("line_items[0][adjustable_quantity][enabled]", "true");
-  params.set("line_items[0][adjustable_quantity][minimum]", "1");
-  params.set("line_items[0][adjustable_quantity][maximum]", String(MAX_QUANTITY));
-  params.set("line_items[0][price_data][currency]", "gbp");
-  params.set("line_items[0][price_data][unit_amount]", String(PRICE_PENCE));
-  params.set("line_items[0][price_data][product_data][name]", product.name);
+  const region = input.region === "international" ? "international" : "uk";
+  const rate = catalogue.shipping[region];
+  let quantity = Math.floor(Number(input.quantity) || 1);
+  quantity = Math.min(Math.max(quantity, 1), catalogue.max_per_order);
 
-  params.set("shipping_address_collection[allowed_countries][0]", "GB");
-  params.set("shipping_options[0][shipping_rate_data][type]", "fixed_amount");
-  params.set("shipping_options[0][shipping_rate_data][display_name]", "UK delivery");
-  params.set("shipping_options[0][shipping_rate_data][fixed_amount][amount]", String(UK_DELIVERY_PENCE));
-  params.set("shipping_options[0][shipping_rate_data][fixed_amount][currency]", "gbp");
-
-  params.set("metadata[order]", product.order);
-
-  let response;
+  // Edition cap: never sell past the limit.
+  let stock;
   try {
-    response = await fetch("https://api.stripe.com/v1/checkout/sessions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${secretKey}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Stripe-Version": STRIPE_API_VERSION,
-      },
-      body: params.toString(),
-    });
+    stock = await stockFor(slug, { fresh: true });
   } catch (err) {
-    return reply(502, { error: "Could not reach the payment provider." });
+    console.error("Stock check failed:", err.message);
+    return reply(502, { error: "Couldn't check stock just now." });
+  }
+  if (stock && stock.remaining != null) {
+    if (stock.remaining <= 0) return reply(409, { error: "Sold out, sorry. Every copy has a home." });
+    if (quantity > stock.remaining) {
+      return reply(409, { error: `Only ${stock.remaining} left, so please choose ${stock.remaining} or fewer.` });
+    }
   }
 
-  const session = await response.json().catch(() => ({}));
-  if (!response.ok || !session.client_secret) {
-    console.error("Stripe session creation failed:", response.status, session.error && session.error.message);
-    return reply(502, { error: "Could not start card payment." });
+  const preorder = release.status === "preorder";
+  const shipLine = preorder ? `Pre-order: ships ${release.ship_date}.` : "In stock.";
+  const origin = originOf(event);
+
+  const p = new URLSearchParams();
+  p.set("ui_mode", "embedded");
+  p.set("mode", "payment");
+  p.set("return_url", `${origin}/thank-you/?release=${slug}&session_id={CHECKOUT_SESSION_ID}`);
+  p.set("billing_address_collection", "auto");
+  p.set("expires_at", String(Math.floor(Date.now() / 1000) + 30 * 60));
+
+  p.set("line_items[0][quantity]", String(quantity));
+  if (/^price_/.test(release.stripe)) {
+    p.set("line_items[0][price]", release.stripe);
+  } else {
+    p.set("line_items[0][price_data][currency]", "gbp");
+    p.set("line_items[0][price_data][unit_amount]", String(release.price_pence));
+    p.set("line_items[0][price_data][product_data][name]", `${release.spine} ${release.title}: Limited Edition Blu-ray${preorder ? " (pre-order)" : ""}`);
+    p.set("line_items[0][price_data][product_data][description]", `${shipLine} Made in ${release.city}. Normal Shoes films.`);
   }
 
-  return reply(200, { clientSecret: session.client_secret, publishableKey });
+  rate.countries.forEach((c, i) => p.set(`shipping_address_collection[allowed_countries][${i}]`, c));
+  p.set("shipping_options[0][shipping_rate_data][type]", "fixed_amount");
+  p.set("shipping_options[0][shipping_rate_data][display_name]", rate.label);
+  p.set("shipping_options[0][shipping_rate_data][fixed_amount][amount]", String(rate.amount_pence));
+  p.set("shipping_options[0][shipping_rate_data][fixed_amount][currency]", "gbp");
+
+  p.set(
+    "custom_text[submit][message]",
+    preorder
+      ? `${shipLine} You're charged today. Cancel any time before it ships for a full refund. Terms: normalshoes.co.uk/terms`
+      : "Posted from Brighton. Terms: normalshoes.co.uk/terms"
+  );
+  if (region === "international") {
+    p.set("custom_text[shipping_address][message]", "International orders may have import duties or taxes to pay on delivery.");
+  }
+
+  p.set("metadata[release]", release.spine);
+  p.set("metadata[quantity]", String(quantity));
+  p.set("metadata[region]", region);
+  p.set("payment_intent_data[metadata][release]", release.spine);
+  p.set("payment_intent_data[metadata][quantity]", String(quantity));
+  p.set("payment_intent_data[description]", `${release.spine} ${release.title} x${quantity}${preorder ? " (pre-order)" : ""}`);
+
+  try {
+    const session = await stripe("checkout/sessions", { method: "POST", params: p });
+    if (!session.client_secret) throw new Error("No client secret");
+    return reply(200, { clientSecret: session.client_secret, publishableKey });
+  } catch (err) {
+    console.error("Stripe session creation failed:", err.message);
+    return reply(502, { error: "Couldn't start card payment." });
+  }
 };
