@@ -7,7 +7,9 @@
 const { stockFor, reply } = require("../lib/stripe");
 
 exports.handler = async (event) => {
-  const slug = ((event.queryStringParameters || {}).release || "").toLowerCase();
+  // /api/stock/ns-001 is rewritten to /.netlify/functions/stock/ns-001
+  const fromPath = (event.path || "").split("/").filter(Boolean).pop();
+  const slug = ((event.queryStringParameters || {}).release || fromPath || "").toLowerCase();
   try {
     const stock = await stockFor(slug);
     if (!stock) return reply(404, { error: "Unknown release" });

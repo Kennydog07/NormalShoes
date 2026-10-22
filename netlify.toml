@@ -15,7 +15,7 @@
 
 [[redirects]]
   from = "/api/stock/:release"
-  to = "/.netlify/functions/stock?release=:release"
+  to = "/.netlify/functions/stock/:release"
   status = 200
 
 # ---- Old service-site URLs -> the label (301) ----------------------------

@@ -24,7 +24,7 @@ const SRC = path.join(ROOT, "src");
 const OUT = path.join(ROOT, "dist");
 
 const site = readJSON(path.join(SRC, "site.json"));
-const BASE = (process.env.BASE_URL || (site.launched ? site.url : process.env.DEPLOY_PRIME_URL || process.env.URL) || site.url).replace(/\/$/, "");
+const BASE = (process.env.BASE_URL || (site.launched ? site.url : process.env.URL) || site.url).replace(/\/$/, "");
 
 // One fixed label palette, in shelf (spectrum) order. Ink text passes WCAG AA
 // on every colour.
