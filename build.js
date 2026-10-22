@@ -389,7 +389,7 @@ ${markTbc(body)}
     </nav>
   </div>
   <div class="wrap footer-base">
-    <p>Normal Shoes films · a Blu-ray label from Shoreham-by-Sea, near Brighton · <a href="mailto:${site.email}">${site.email}</a></p>
+    <p>Normal Shoes films · a Blu-ray label from Brighton · <a href="mailto:${site.email}">${site.email}</a></p>
     <p class="fine">Normal Shoes · ${esc(site.address)} · © ${new Date().getFullYear()} Normal Shoes. We sell films, not footwear. Sensible shoes not included.</p>
   </div>
 </footer>
@@ -810,7 +810,7 @@ function pressPage(pngs) {
   <div class="wrap prose-grid">
     <div class="prose">
       <h2>In one paragraph</h2>
-      <p class="pull">Normal Shoes is a boutique Blu-ray label from Shoreham-by-Sea, near Brighton, releasing films nobody else would: DIY and outsider films, films never released in the UK, and lost or forgotten films. Every release is numbered by spine (NS-001, NS-002…) and carries a shoebox-style “Made In” label naming the city it was made in, so the catalogue builds into a map of unseen cinema. The first release, NS-001, is <em>Brighton Wok: The Legend of Ganja Boxing</em>, Made in Brighton: a limited edition Blu-ray of ${current.edition_limit} copies with slipcover and booklet.</p>
+      <p class="pull">Normal Shoes is a boutique Blu-ray label from Brighton, releasing films nobody else would: DIY and outsider films, films never released in the UK, and lost or forgotten films. Every release is numbered by spine (NS-001, NS-002…) and carries a shoebox-style “Made In” label naming the city it was made in, so the catalogue builds into a map of unseen cinema. The first release, NS-001, is <em>Brighton Wok: The Legend of Ganja Boxing</em>, Made in Brighton: a limited edition Blu-ray of ${current.edition_limit} copies with slipcover and booklet.</p>
       <h2>Contact</h2>
       <p>Interviews, review copies and screenings: <a href="mailto:${site.email}?subject=Press">${site.email}</a>. A real person answers.</p>
     </div>

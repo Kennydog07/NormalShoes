@@ -102,7 +102,7 @@ exports.handler = async (event) => {
     "custom_text[submit][message]",
     preorder
       ? `${shipLine} You're charged today. Cancel any time before it ships for a full refund. Terms: normalshoes.co.uk/terms`
-      : "Posted from Shoreham-by-Sea. Terms: normalshoes.co.uk/terms"
+      : "Posted from Brighton. Terms: normalshoes.co.uk/terms"
   );
   if (region === "international") {
     p.set("custom_text[shipping_address][message]", "International orders may have import duties or taxes to pay on delivery.");
