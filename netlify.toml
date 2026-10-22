@@ -50,11 +50,11 @@
   status = 301
 [[redirects]]
   from = "/archive-brimful-bellies"
-  to = "/releases/"
+  to = "/sample/"
   status = 301
 [[redirects]]
   from = "/archive-brimful-bellies.html"
-  to = "/releases/"
+  to = "/sample/"
   status = 301
 [[redirects]]
   from = "/submission-requirements"

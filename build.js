@@ -247,6 +247,91 @@ function signup({ id, source, heading = "", intro = "", button = "Sign me up", c
 </form>`;
 }
 
+// ---------------------------------------------------------------------------
+// The sample: #000, the Cal Dalglish collection, shown so people can see the
+// kind of object they'll get. Original photos in src/static/img/sample/.
+
+const SAMPLE = {
+  url: "/sample/",
+  photos: [
+    ["collection-shelf", "Everything in the box: outer sleeve, opened case with printed inner panel, picture disc and printed photo inserts", "Everything in the box"],
+    ["case-front", "The matt black outer sleeve, titled Cal Dalglish, with the three film titles along the bottom", "The outer sleeve"],
+    ["case-spine", "The spine, printed #000, Cal Dalglish, BB&BB, LT, TWSG, Normal Shoes", "Spine #000"],
+    ["cover-detail", "The case wrapped in a full-bleed film still, with Brimful Bellies & Bad Behaviour on the spine", "Full-wrap case art"],
+    ["case-angle", "The case standing open, showing the wraparound still from front to back", "Front to back, one image"],
+    ["cover-art", "A second, darker sleeve design: a face lit orange behind a wire mesh", "A second sleeve design"],
+    ["digipak-cards", "The case opened: a printed inner panel on the left and the disc in its tray on the right", "Opened up"],
+    ["digipak-open", "Close-up of the printed inner panel, a spread of old football stickers", "Printed inside, too"],
+    ["disc-tray", "Close-up of the full-colour picture disc in its tray", "Picture disc"],
+  ],
+};
+
+function samplePhoto([name, alt], { sizes = "(max-width: 760px) 50vw, 380px", eager = false } = {}) {
+  const base = `/img/sample/brimful-${name}`;
+  return `<picture><source type="image/webp" srcset="${base}-400.webp 400w, ${base}-800.webp 800w, ${base}-1200.webp 1200w" sizes="${sizes}"><img src="${base}-800.jpg" alt="${attr(alt)}" width="800" height="1066" ${eager ? "" : 'loading="lazy" '}decoding="async"></picture>`;
+}
+
+// "What you'll get": a short strip of sample photos.
+function sampleStrip({ heading = "What you'll get", note = "" } = {}) {
+  const picks = ["collection-shelf", "cover-detail", "digipak-cards", "disc-tray"].map((n) => SAMPLE.photos.find((p) => p[0] === n));
+  return `<section class="band band--sample">
+  <div class="wrap">
+    <div class="section-head"><h2>${heading}</h2><a class="more" href="${SAMPLE.url}">See the sample pair →</a></div>
+    <p class="sample-intro">This is <strong class="mono">#000</strong>, our sample pair: a collection of Cal Dalglish's short films, including <em>Brimful Bellies &amp; Bad Behaviour</em>. Real photos, no renders. Every release gets this level of care. ${note}</p>
+    <ul class="sample-strip">${picks.map((p) => `<li><a href="${SAMPLE.url}">${samplePhoto(p, { sizes: "(max-width: 760px) 45vw, 270px" })}</a><span class="fine">${esc(p[2])}</span></li>`).join("")}</ul>
+  </div>
+</section>`;
+}
+
+function samplePage() {
+  const body = `
+<section class="page-head">
+  <div class="wrap teaser-grid">
+    <div class="sample-hero">${samplePhoto(SAMPLE.photos[1], { sizes: "(max-width: 760px) 90vw, 420px", eager: true })}</div>
+    <div>
+      <p class="eyebrow mono">Spine #000 · The sample pair</p>
+      <h1>Try before you buy.</h1>
+      <p class="lede">Shoe shops keep a sample pair in the window. This is ours: the disc we made before the label had its first number, so you can see exactly the kind of thing that turns up at your door.</p>
+      <p><strong>Cal Dalglish: The Way She Goes · Brimful Bellies &amp; Bad Behaviour · Last Thursday.</strong> Three short films on one disc, in a printed case with an outer sleeve, a picture disc and photo inserts.</p>
+      <p class="fine">#000 isn't on sale; it lives in the window. Each numbered release has its own packaging (NS-001 comes with a slipcover and booklet), but the care is the same.</p>
+    </div>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap prose-grid">
+    <div class="prose">
+      <h2>Brimful Bellies &amp; Bad Behaviour</h2>
+      <p>In this darkly comic short, an ordinary meal becomes an increasingly strange study of appetite, intimacy and control. Blending uncomfortable humour with striking imagery, it explores the curious rituals and shifting power dynamics that emerge when hunger, and human behaviour, are allowed to run unchecked.</p>
+    </div>
+    <aside class="prose">
+      <h2>What to look for</h2>
+      <ul class="ticks">
+        <li>Art on every surface: sleeve, case, inside panel and disc</li>
+        <li>A spine that reads properly on a shelf</li>
+        <li>Printed inserts, not an afterthought</li>
+        <li>A disc that's authored and tested to play properly</li>
+      </ul>
+    </aside>
+  </div>
+</section>
+<section class="band band--sample">
+  <div class="wrap">
+    <h2>Every angle</h2>
+    <ul class="sample-gallery">${SAMPLE.photos
+      .map((p) => `<li><figure>${samplePhoto(p, { sizes: "(max-width: 760px) 92vw, (max-width: 1080px) 45vw, 360px" })}<figcaption>${esc(p[2])}</figcaption></figure></li>`)
+      .join("")}</ul>
+    <p style="margin-top:2rem"><a class="btn btn-primary" href="${current.url}">${current.buyable ? `Now ${current.status === "preorder" ? "pre-order" : "buy"} ${esc(current.spine)}` : "See the releases"}</a></p>
+  </div>
+</section>`;
+  return layout({
+    title: "The sample pair (#000): what a Normal Shoes Blu-ray looks like",
+    description: "Real photos of #000, the Normal Shoes sample disc: Cal Dalglish's short films including Brimful Bellies & Bad Behaviour. Sleeve, case, picture disc and inserts.",
+    pathName: SAMPLE.url,
+    body,
+    ogImage: "/img/sample/brimful-collection-shelf-800.jpg",
+  });
+}
+
 function spine(r, { selected = false } = {}) {
   const words = r.teaser ? "Made in ??????" : `Made in ${r.made_in_city}`;
   return `<a class="spine${selected ? " is-out" : ""}" href="${r.url}" data-spine="${r.slug}" style="--label:${r.colour}"${selected ? ' aria-current="true"' : ""}>
@@ -280,6 +365,7 @@ function shelf({ withPanels = true } = {}) {
     : "";
   return `<div class="shelf" data-shelf>
   <div class="shelf-row" role="list" aria-label="Releases by spine number">
+    <div role="listitem"><a class="spine spine--sample" href="${SAMPLE.url}"><span class="spine-no mono">#000</span><span class="spine-made">Sample pair</span><span class="spine-title">Cal Dalglish</span></a></div>
     ${releases.map((r) => `<div role="listitem">${spine(r, { selected: r === current })}</div>`).join("\n    ")}
     ${ghosts}
   </div>
@@ -378,6 +464,7 @@ ${markTbc(body)}
         <li><a href="/map/">The Map</a></li>
         <li><a href="/where-next/">Where next?</a></li>
         <li><a href="/shoe-club/">Shoe Club</a></li>
+        <li><a href="/sample/">The sample pair</a></li>
         <li><a href="/stockists/">Stockists</a></li>
         <li><a href="/about/">About</a></li>
         <li><a href="/press/">Press</a></li>
@@ -441,6 +528,8 @@ function homePage() {
     ${shelf({ withPanels: false })}
   </div>
 </section>
+
+${sampleStrip()}
 
 ${
   nextUp
@@ -630,6 +719,7 @@ ${pager(prev, next)}`;
       </div>
     </div>
   </section>
+  ${sampleStrip({ heading: "What to expect", note: `${esc(r.spine)} has its own packaging, listed under The edition above.` })}
   ${pager(prev, next)}
 </article>
 ${checkoutDialog()}`;
@@ -1009,6 +1099,7 @@ function build() {
   add("/stockists/", stockistsPage());
   add("/press/", pressPage(pngs));
   add("/thank-you/", thankYouPage());
+  add(SAMPLE.url, samplePage());
 
   for (const file of fs.readdirSync(path.join(SRC, "pages")).filter((f) => f.endsWith(".html"))) {
     const { meta, body } = fragmentPage(file);
