@@ -1,0 +1,51 @@
+{
+  "name": "Normal Shoes",
+  "tagline": "Films nobody else would release.",
+  "descriptor": "Normal Shoes films: a boutique Blu-ray label from Brighton",
+  "url": "https://www.normalshoes.co.uk",
+  "email": "normalshoeseditions@gmail.com",
+  "instagram": "https://www.instagram.com/normalshoeseditions/",
+  "address": "Flat 113, Mariner Point, 83 Brighton Road, Shoreham-by-Sea, BN43 6DH",
+
+  "_launched": "false = preview: pages are noindex, robots.txt blocks crawlers and checkout refuses live Stripe keys. Set to true at switch-over.",
+  "launched": false,
+
+  "max_per_order": 3,
+
+  "shipping": {
+    "uk": {
+      "label": "UK delivery",
+      "amount_pence": 395,
+      "countries": ["GB"]
+    },
+    "international": {
+      "label": "International delivery",
+      "amount_pence": 995,
+      "tbc": true,
+      "countries": ["IE", "FR", "DE", "NL", "BE", "LU", "ES", "PT", "IT", "AT", "CH", "DK", "SE", "NO", "FI", "IS", "PL", "CZ", "SK", "HU", "SI", "HR", "GR", "EE", "LV", "LT", "MT", "CY", "US", "CA", "AU", "NZ", "JP", "KR", "SG", "HK", "TW", "TH", "MY", "PH", "ID", "IN", "IL", "AE", "ZA", "MX", "BR", "AR", "CL"]
+    }
+  },
+
+  "stockists": [
+    {
+      "name": "Timeslip",
+      "city": "Brighton",
+      "address": "[TBC] Street address",
+      "url": "",
+      "note": "Our first stockist and the counter where NS-001 lives in Brighton. [TBC] Opening hours / link."
+    }
+  ],
+
+  "_shoe_club": "Planned subscription. Only status 'interest' is used today (register-interest form). The other fields are placeholders for when it launches: a Stripe recurring Price per release or per year, and which releases it covers (releases with club_eligible: true).",
+  "shoe_club": {
+    "status": "interest",
+    "model": "[TBC] per-release charge when each disc ships, or annual",
+    "member_price_pence": null,
+    "stripe_price_id": null,
+    "perks": [
+      "Every release, automatically. No refreshing a pre-order page.",
+      "Your copy is set aside before pre-orders open.",
+      "[TBC] Member price and postage"
+    ]
+  }
+}

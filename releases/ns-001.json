@@ -1,0 +1,74 @@
+{
+  "spine": "NS-001",
+  "slug": "ns-001",
+  "title": "Brighton Wok: The Legend of Ganja Boxing",
+  "short_title": "Brighton Wok",
+  "year": 2008,
+  "made_in_city": "Brighton",
+  "made_in_country": "England",
+  "coordinates": { "lat": 50.82, "lon": -0.14 },
+  "label_colour": "mustard",
+  "status": "preorder",
+
+  "price": 24.99,
+  "price_tbc": true,
+  "edition_limit": 500,
+  "_stock": "Live count comes from paid Stripe orders. stock_remaining is the fallback shown when Stripe isn't connected. allocated_elsewhere = copies held back for Timeslip etc. stock_adjust adds copies back (e.g. refunds).",
+  "stock_remaining": 500,
+  "allocated_elsewhere": 0,
+  "stock_adjust": 0,
+  "sales_open": "2026-10-22",
+  "ship_date": "[TBC]",
+
+  "runtime": "[TBC]",
+  "bbfc_rating": "[TBC]",
+  "region": "Region-free (A/B/C) [TBC]",
+  "specs": {
+    "Disc": "Blu-ray [TBC] BD-25 / BD-50",
+    "Picture": "1080p [TBC] source and transfer details",
+    "Aspect ratio": "[TBC]",
+    "Audio": "[TBC]",
+    "Subtitles": "English SDH [TBC]"
+  },
+  "extras": [
+    "[TBC] Extras are still being put together. Every one will be listed here."
+  ],
+  "edition": {
+    "limit": 500,
+    "items": [
+      "Limited edition of 500 copies",
+      "Slipcover",
+      "Booklet",
+      "Spine number NS-001 with the Made in Brighton label"
+    ]
+  },
+
+  "tagline": "The first stamp in the passport.",
+  "synopsis": [
+    "[TBC] Synopsis to come, written with the filmmakers."
+  ],
+  "story": [
+    "Brighton Wok was made by three friends with no budget, shot between 2004 and 2006, and premiered at the Duke of York's in 2008, billed as \"England's first kung-fu movie\".",
+    "Since then it has only been available on DVDs the makers sold themselves. It has also played as far away as Spectacle in Brooklyn. Nobody else was going to put it out properly. So we are."
+  ],
+  "made_in_note": [
+    "Brighton makes its own entertainment. It has a cinema that has been showing films since before most of us were born, shops where people still argue about formats at the counter, and a long line of people making things with their mates because nobody gave them permission.",
+    "That's why NS-001 is Made in Brighton: it's where the label lives, and it's the right first stamp. [TBC] A short piece from someone who was there."
+  ],
+  "credits": {
+    "Made by": "[TBC] The three filmmakers",
+    "Cast": "[TBC]",
+    "Cover art": "[TBC] Illustrator",
+    "Booklet": "[TBC]",
+    "Disc produced by": "Normal Shoes"
+  },
+  "stockists": ["Timeslip"],
+
+  "images": {
+    "cover": null,
+    "cover_alt": "Cover of NS-001 Brighton Wok: The Legend of Ganja Boxing"
+  },
+  "_stripe": "Leave empty to price from 'price' above (current pattern). Or set a Stripe Price ID (price_...) or a Payment Link URL (https://buy.stripe.com/...).",
+  "stripe_link_or_price_id": "",
+  "club_eligible": true
+}

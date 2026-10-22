@@ -1,0 +1,38 @@
+{
+  "spine": "NS-002",
+  "slug": "ns-002",
+  "teaser": true,
+  "title": "??????",
+  "short_title": "??????",
+  "year": null,
+  "made_in_city": "??????",
+  "made_in_country": "Somewhere",
+  "coordinates": null,
+  "_map_teaser": "Where the '?' pin sits on the map until the real place is announced.",
+  "map_teaser": { "lat": -24, "lon": -128 },
+  "label_colour": "terracotta",
+  "status": "coming-soon",
+
+  "price": null,
+  "edition_limit": null,
+  "stock_remaining": null,
+  "ship_date": null,
+  "runtime": null,
+  "bbfc_rating": null,
+  "region": null,
+  "specs": {},
+  "extras": [],
+  "edition": { "limit": null, "items": [] },
+
+  "tagline": "Next stop: somewhere. We're not saying yet.",
+  "synopsis": [
+    "The second release is in the works. It was made a long way from Brighton, it has never been released in the UK, and that's all we're saying for now."
+  ],
+  "story": [],
+  "made_in_note": [],
+  "credits": {},
+  "stockists": [],
+  "images": { "cover": null, "cover_alt": "" },
+  "stripe_link_or_price_id": "",
+  "club_eligible": true
+}

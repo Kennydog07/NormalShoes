@@ -1,0 +1,57 @@
+<!--{"title": "Shoe Club: every release, automatically", "description": "Shoe Club is the Normal Shoes subscription (coming soon): every Blu-ray release, automatically. Register your interest."}-->
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow mono">Coming soon</p>
+    <h1>Shoe Club</h1>
+    <p class="lede">Every release, automatically. One size fits all your shelves.</p>
+  </div>
+</section>
+
+<section class="band band--tight">
+  <div class="wrap club-grid">
+    <div class="prose">
+      <h2>How it'll work</h2>
+      <p>Join once, and every new Normal Shoes release comes to you, no matter where it was made. Your copy is set aside before pre-orders open, so a limited run never sells out on you.</p>
+      {{perks}}
+      <p>We're not taking members yet. We want to get the first couple of releases right before we promise you a subscription. Register your interest and you'll be the first to hear when it opens, with no obligation to join.</p>
+
+      <form class="form" id="shoe-club" name="shoe-club" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-subject="Shoe Club interest">
+        <input type="hidden" name="form-name" value="shoe-club">
+        <p class="hp"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+        <div class="field">
+          <label for="club-name">First name</label>
+          <input id="club-name" type="text" name="firstName" autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label for="club-email">Email</label>
+          <input id="club-email" type="email" name="email" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="club-country">Where would we post your discs?</label>
+          <select id="club-country" name="region">
+            <option value="UK">UK</option>
+            <option value="Europe">Europe</option>
+            <option value="North America">North America</option>
+            <option value="Elsewhere">Somewhere else</option>
+          </select>
+        </div>
+        <p class="fine">We'll only email you about Shoe Club and new releases. Unsubscribe any time by replying. <a href="/privacy/">Privacy</a>.</p>
+        <p><button class="btn btn-primary" type="submit">Keep me a pair</button></p>
+        <p class="form-success" id="shoe-club-success" role="status">You're on the Shoe Club list. We'll be in touch when the doors open.</p>
+      </form>
+    </div>
+    <aside>
+      <div class="shoebox" aria-hidden="true">
+        <p class="mono" style="margin:0">SHOE CLUB · MEMBER COPY</p>
+        <div class="shoebox-row">
+          <span class="spine" style="--label:#e8b04a"><span class="spine-no mono">001</span><span class="spine-made">Brighton</span></span>
+          <span class="spine" style="--label:#e2866a"><span class="spine-no mono">002</span><span class="spine-made">??????</span></span>
+          <span class="spine spine--ghost"><span class="spine-no mono">003</span></span>
+          <span class="spine spine--ghost"><span class="spine-no mono">004</span></span>
+          <span class="spine spine--ghost"><span class="spine-no mono">005</span></span>
+        </div>
+        <p class="fine" style="margin:0">Fits most shelves.</p>
+      </div>
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,52 @@
+<!--{"title": "Contact", "description": "Get in touch with Normal Shoes, the Brighton Blu-ray label: orders, stockists, press, filmmakers. A real person replies."}-->
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow mono">Contact</p>
+    <h1>Talk to a person.</h1>
+    <p class="lede">Orders, shops, press, filmmakers, or just to tell us about a film. You'll get a reply from the person who runs the label.</p>
+  </div>
+</section>
+
+<section class="band band--tight">
+  <div class="wrap prose-grid">
+    <form class="form" id="contact" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-subject="Website message">
+      <input type="hidden" name="form-name" value="contact">
+      <p class="hp"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <div class="field">
+        <label for="c-name">Name</label>
+        <input id="c-name" type="text" name="name" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="c-email">Email</label>
+        <input id="c-email" type="email" name="email" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="c-topic">What's it about?</label>
+        <select id="c-topic" name="topic">
+          <option>An order</option>
+          <option>Stocking our films</option>
+          <option>Press or screenings</option>
+          <option>I'm a filmmaker</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="c-message">Message</label>
+        <textarea id="c-message" name="message" required></textarea>
+      </div>
+      <p class="fine">We use your details only to reply. <a href="/privacy/">Privacy</a>.</p>
+      <p><button class="btn btn-primary" type="submit">Send</button></p>
+      <p class="form-success" id="contact-success" role="status">Thanks, that's arrived. We'll reply by email, usually within a couple of days.</p>
+    </form>
+    <aside class="prose">
+      <h2>Or directly</h2>
+      <p><a href="mailto:{{email}}">{{email}}</a></p>
+      <p><a href="{{instagram}}" rel="noopener">Instagram</a></p>
+      <h2>Post</h2>
+      <p>Normal Shoes<br>{{address}}</p>
+      <p class="fine">That's an office, not a shop. For a copy over the counter, see <a href="/stockists/">stockists</a>.</p>
+      <h2>Suggesting a film?</h2>
+      <p>Use <a href="/where-next/">Where next?</a> so we get the details we need.</p>
+    </aside>
+  </div>
+</section>

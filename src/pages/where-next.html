@@ -1,0 +1,66 @@
+<!--{"title": "Where next? Suggest a film", "description": "Tell Normal Shoes about a film nobody else would release: where it was made and why it deserves a Blu-ray. Filmmakers welcome."}-->
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow mono">Where next?</p>
+    <h1>Tell us a film nobody else would release.</h1>
+    <p class="lede">The shed epic. The film from your hometown that played once and vanished. The thing you saw on a VHS at a friend's house and have never found since. If you made it yourself, even better.</p>
+  </div>
+</section>
+
+<section class="band band--tight">
+  <div class="wrap prose-grid">
+    <form class="form" id="where-next" name="where-next" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-subject="Where next? suggestion">
+      <input type="hidden" name="form-name" value="where-next">
+      <p class="hp"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+
+      <div class="field">
+        <label for="wn-film">The film</label>
+        <input id="wn-film" type="text" name="film" required placeholder="Title (and year, if you know it)">
+      </div>
+      <div class="field">
+        <label for="wn-where">Where was it made? <span class="hint">City first, then country</span></label>
+        <input id="wn-where" type="text" name="madeIn" required placeholder="e.g. Hastings, England">
+      </div>
+      <div class="field">
+        <label for="wn-why">Why should it be on the shelf?</label>
+        <textarea id="wn-why" name="why" required placeholder="What makes it special, who made it, whether it's ever been released, anything you know about where it survives."></textarea>
+      </div>
+      <div class="field">
+        <label for="wn-link">A link <span class="hint">(optional) trailer, article, anything</span></label>
+        <input id="wn-link" type="url" name="link" placeholder="https://">
+      </div>
+      <div class="field">
+        <fieldset>
+          <legend>You are…</legend>
+          <label class="choice"><input type="radio" name="relationship" value="I made it (or helped)" required> I made it, or helped make it</label>
+          <label class="choice"><input type="radio" name="relationship" value="I know who made it"> I know who made it</label>
+          <label class="choice"><input type="radio" name="relationship" value="A fan"> Just a fan</label>
+        </fieldset>
+      </div>
+      <div class="field">
+        <label for="wn-name">Your name</label>
+        <input id="wn-name" type="text" name="name" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="wn-email">Your email <span class="hint">so we can ask follow-up questions</span></label>
+        <input id="wn-email" type="email" name="email" required autocomplete="email">
+      </div>
+      <p class="fine">Suggesting a film doesn't commit anyone to anything, and we never act on a film without the rights holders' agreement. We use your details only to reply about this film. <a href="/privacy/">Privacy</a>.</p>
+      <p><button class="btn btn-primary" type="submit">Send it our way</button></p>
+      <p class="form-success" id="where-next-success" role="status">Got it, thank you. We read every one. If it's a fit, you'll hear from a real person.</p>
+    </form>
+
+    <aside class="prose">
+      <h2>What we're looking for</h2>
+      <ul>
+        <li>Films that have never had a proper release, or never in the UK.</li>
+        <li>Films with a story behind them: how they got made matters to us.</li>
+        <li>Any genre, any decade, any budget, including none.</li>
+      </ul>
+      <h2>Filmmakers</h2>
+      <p>If it's your film, tell us what you've still got: the original tapes or files, behind-the-scenes footage, who holds the rights, and whether the music is cleared. That's what decides whether a release can happen.</p>
+      <p>We license physical-media rights only, for a fixed term, and you keep everything else. It's always a written agreement, and you get paid.</p>
+      <div style="margin-top:2rem">{{label:ns-002:sm}}</div>
+    </aside>
+  </div>
+</section>

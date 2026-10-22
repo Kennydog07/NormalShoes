@@ -1,16 +1,136 @@
-# Response headers only — no build settings here, so the existing Netlify
-# site configuration (publish directory, forms, etc.) is unchanged.
-#
-# Asset filenames are not content-hashed, so use a moderate 7-day cache
-# rather than "immutable". If an image is replaced under the same name,
-# visitors may see the old one for up to a week — rename the file instead.
+# Normal Shoes films. Static site built by build.js (no framework).
+[build]
+  command = "node build.js"
+  publish = "dist"
+  functions = "netlify/functions"
 
+[functions]
+  node_bundler = "esbuild"
+
+# ---- API -----------------------------------------------------------------
+[[redirects]]
+  from = "/api/checkout"
+  to = "/.netlify/functions/create-checkout"
+  status = 200
+
+[[redirects]]
+  from = "/api/stock/:release"
+  to = "/.netlify/functions/stock?release=:release"
+  status = 200
+
+# ---- Old service-site URLs -> the label (301) ----------------------------
+# Kept pages (about, contact, privacy, terms) live at the same paths.
+[[redirects]]
+  from = "/about.html"
+  to = "/about/"
+  status = 301
+[[redirects]]
+  from = "/contact.html"
+  to = "/contact/"
+  status = 301
+[[redirects]]
+  from = "/privacy.html"
+  to = "/privacy/"
+  status = 301
+[[redirects]]
+  from = "/terms.html"
+  to = "/terms/"
+  status = 301
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/archive"
+  to = "/releases/"
+  status = 301
+[[redirects]]
+  from = "/archive.html"
+  to = "/releases/"
+  status = 301
+[[redirects]]
+  from = "/archive-brimful-bellies"
+  to = "/releases/"
+  status = 301
+[[redirects]]
+  from = "/archive-brimful-bellies.html"
+  to = "/releases/"
+  status = 301
+[[redirects]]
+  from = "/submission-requirements"
+  to = "/where-next/"
+  status = 301
+[[redirects]]
+  from = "/submission-requirements.html"
+  to = "/where-next/"
+  status = 301
+[[redirects]]
+  from = "/hastings-rocks"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/hastings-rocks.html"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/brighton-rocks"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/brighton-rocks.html"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/briff-festival-collection"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/briff-festival-collection.html"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/package-tiers"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/package-tiers.html"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/enquire"
+  to = "/contact/"
+  status = 301
+[[redirects]]
+  from = "/enquire.html"
+  to = "/contact/"
+  status = 301
+[[redirects]]
+  from = "/clapper-web.mp4"
+  to = "/"
+  status = 301
+
+# ---- Headers -------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# CSS/JS filenames carry a content hash, so they can be cached forever.
 [[headers]]
   for = "/assets/*"
   [headers.values]
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
-  for = "/clapper-web.mp4"
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Images aren't hashed: a week, so a replaced cover shows within days.
+[[headers]]
+  for = "/img/*"
   [headers.values]
     Cache-Control = "public, max-age=604800"
