@@ -676,3 +676,10 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); width
 
 .map-list .mono { white-space: nowrap; font-size: 0.85em; }
 .map-list a { flex-wrap: wrap; row-gap: 0.1rem; }
+
+/* Tablet / small laptop: label sits beside the headline instead of under it. */
+@media (min-width: 760px) and (max-width: 1079px) {
+  .hero-copy { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 2.5rem; align-items: center; }
+  .hero-copy > :not(.hero-stamp) { grid-column: 1; }
+  .hero-stamp { grid-column: 2; grid-row: 1 / span 3; width: 250px; margin: 0; }
+}
