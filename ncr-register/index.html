@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>NCR Register</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #eef0f3;
+  --text: #1a1e23;
+  --muted: #5c6570;
+  --border: #dadee4;
+  --accent: #1d5bb8;
+  --accent-ink: #ffffff;
+  --accent-soft: #e5edfa;
+  --ok: #17703f;
+  --ok-soft: #e1f3e8;
+  --warn: #9a5800;
+  --warn-soft: #fcefd9;
+  --info: #5a3db0;
+  --info-soft: #ece7fa;
+  --danger: #b3261e;
+  --danger-soft: #fce6e4;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .08);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111418;
+    --surface: #1a1e24;
+    --surface-2: #232830;
+    --text: #e7eaee;
+    --muted: #9aa3ae;
+    --border: #2f353e;
+    --accent: #6ea1ef;
+    --accent-ink: #0d1420;
+    --accent-soft: #1d2a40;
+    --ok: #63c98e;
+    --ok-soft: #173023;
+    --warn: #f0b45c;
+    --warn-soft: #362812;
+    --info: #b29df2;
+    --info-soft: #2a2343;
+    --danger: #f2877f;
+    --danger-soft: #3a1c1a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111418;
+  --surface: #1a1e24;
+  --surface-2: #232830;
+  --text: #e7eaee;
+  --muted: #9aa3ae;
+  --border: #2f353e;
+  --accent: #6ea1ef;
+  --accent-ink: #0d1420;
+  --accent-soft: #1d2a40;
+  --ok: #63c98e;
+  --ok-soft: #173023;
+  --warn: #f0b45c;
+  --warn-soft: #362812;
+  --info: #b29df2;
+  --info-soft: #2a2343;
+  --danger: #f2877f;
+  --danger-soft: #3a1c1a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1400px; margin: 0 auto; padding: 24px 16px 48px; }
+
+header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+header.top h1 { font-size: 22px; margin: 0; letter-spacing: -.01em; }
+header.top p { margin: 4px 0 0; color: var(--muted); }
+
+button, .btn {
+  font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); padding: 8px 14px; line-height: 1.2;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+button:hover, .btn:hover { background: var(--surface-2); }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+button.primary:hover { filter: brightness(1.08); background: var(--accent); }
+button.danger { color: var(--danger); }
+button.danger:hover { background: var(--danger-soft); }
+button.ghost { border-color: transparent; background: transparent; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .drop:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+button:disabled { opacity: .5; cursor: not-allowed; }
+
+.drop {
+  border: 2px dashed var(--border); border-radius: 12px; background: var(--surface);
+  padding: 22px 16px; text-align: center; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.drop.over { border-color: var(--accent); background: var(--accent-soft); }
+.drop strong { display: block; font-size: 15px; margin-bottom: 4px; }
+.drop span { color: var(--muted); font-size: 13px; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 16px 0; }
+.toolbar .spacer { flex: 1; }
+.toolbar input[type=search] { min-width: 0; flex: 1 1 220px; max-width: 360px; }
+
+input, select, textarea {
+  font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; width: 100%;
+}
+.toolbar select, .toolbar input { width: auto; }
+textarea { resize: vertical; min-height: 70px; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 16px; }
+.tile { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow); }
+.tile .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.tile .v { font-size: 24px; font-weight: 650; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.status-bar { display: none; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; background: var(--accent-soft); color: var(--text); margin-top: 12px; }
+.status-bar.show { display: flex; }
+.spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--accent); border-right-color: transparent; animation: spin .8s linear infinite; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: auto; box-shadow: var(--shadow); }
+table { border-collapse: collapse; width: 100%; min-width: 1000px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { position: sticky; top: 0; background: var(--surface-2); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; cursor: pointer; user-select: none; white-space: nowrap; }
+th[aria-sort="ascending"]::after { content: " ▲"; font-size: 10px; }
+th[aria-sort="descending"]::after { content: " ▼"; font-size: 10px; }
+th.noclick { cursor: default; }
+tbody tr { cursor: pointer; }
+tbody tr:hover td { background: var(--surface-2); }
+tbody tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.nowrap { white-space: nowrap; }
+td .clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 340px; }
+td.ncr { font-weight: 600; white-space: nowrap; }
+.empty { padding: 48px 16px; text-align: center; color: var(--muted); }
+
+.pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.pill.Open { background: var(--warn-soft); color: var(--warn); }
+.pill.In-Progress { background: var(--info-soft); color: var(--info); }
+.pill.Closed { background: var(--ok-soft); color: var(--ok); }
+.pill.Cancelled { background: var(--surface-2); color: var(--muted); }
+.late { color: var(--danger); font-weight: 600; }
+
+dialog {
+  border: 1px solid var(--border); border-radius: 14px; padding: 0; background: var(--surface); color: var(--text);
+  width: min(920px, calc(100vw - 32px)); max-height: calc(100vh - 32px); box-shadow: 0 20px 50px rgba(0, 0, 0, .25);
+}
+dialog::backdrop { background: rgba(10, 14, 20, .5); }
+.dlg { display: flex; flex-direction: column; max-height: calc(100vh - 34px); }
+.dlg-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.dlg-head h2 { margin: 0; font-size: 17px; }
+.dlg-head p { margin: 2px 0 0; color: var(--muted); font-size: 13px; word-break: break-all; }
+.dlg-body { padding: 16px 20px; overflow: auto; }
+.dlg-foot { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.dlg-foot .spacer { flex: 1; }
+
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 14px; }
+.grid .full { grid-column: 1 / -1; }
+.field label { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+.field label .tag { font-weight: 500; font-size: 11px; }
+.field label .tag.found { color: var(--ok); }
+.field label .tag.missing { color: var(--warn); }
+.field.missing input, .field.missing textarea, .field.missing select { border-color: var(--warn); border-style: dashed; }
+
+.notice { padding: 10px 12px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; }
+.notice.warn { background: var(--warn-soft); color: var(--warn); }
+.notice.info { background: var(--accent-soft); color: var(--text); }
+details.raw { margin-top: 16px; }
+details.raw summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+details.raw pre { white-space: pre-wrap; word-break: break-word; background: var(--surface-2); padding: 12px; border-radius: 8px; max-height: 280px; overflow: auto; font-size: 12px; }
+
+.toast-host { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 50; width: min(520px, calc(100vw - 32px)); }
+.toast { background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 10px; box-shadow: var(--shadow); font-size: 13px; }
+.toast.error { background: var(--danger); color: #fff; }
+
+.foot-note { color: var(--muted); font-size: 12px; margin-top: 14px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .grid { grid-template-columns: 1fr; }
+  .toolbar input[type=search] { max-width: none; }
+  header.top h1 { font-size: 19px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>NCR Register</h1>
+      <p>Upload non-conformance reports and the key details are read into the register automatically.</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="primary" id="btnExport" title="Download the whole register as an Excel workbook">⬇ Export to Excel</button>
+    </div>
+  </header>
+
+  <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload NCR documents">
+    <strong>Drop NCR documents here, or click to choose files</strong>
+    <span>PDF, Word (.docx), Excel (.xlsx/.csv), text, or scanned images (PNG/JPG) · multiple files at once</span>
+    <input type="file" id="fileInput" class="visually-hidden" multiple
+      accept=".pdf,.docx,.xlsx,.xlsm,.xls,.csv,.ods,.txt,.eml,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff">
+  </div>
+  <div class="status-bar" id="statusBar" role="status" aria-live="polite"><div class="spinner"></div><span id="statusText"></span></div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="toolbar">
+    <input type="search" id="search" placeholder="Search NCR no., vendor, part, reason…" aria-label="Search register">
+    <select id="statusFilter" aria-label="Filter by status">
+      <option value="">All statuses</option>
+      <option>Open</option><option>In Progress</option><option>Closed</option><option>Cancelled</option>
+    </select>
+    <div class="spacer"></div>
+    <button id="btnPaste">Paste NCR text</button>
+    <button id="btnManual">+ Add manually</button>
+    <button id="btnImport" title="Load a register previously exported from this app">Import register (.xlsx)</button>
+    <input type="file" id="importInput" class="visually-hidden" accept=".xlsx,.xls,.csv">
+    <label style="display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px">
+      Dates in docs
+      <select id="dateOrder" aria-label="Date order used in uploaded documents">
+        <option value="dmy">DD/MM/YYYY</option>
+        <option value="mdy">MM/DD/YYYY</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="table-wrap">
+    <table id="table">
+      <thead><tr id="headRow"></tr></thead>
+      <tbody id="body"></tbody>
+    </table>
+    <div class="empty" id="empty" hidden>No NCRs yet — upload a document above to get started.</div>
+  </div>
+  <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center">
+    <p class="foot-note">Click a row to view or edit it. The register is saved in this browser — export to Excel regularly as a backup.</p>
+    <button class="danger ghost" id="btnClear">Clear register</button>
+  </div>
+</div>
+
+<!-- Review / edit dialog -->
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <form method="dialog" class="dlg" id="dlgForm" novalidate>
+    <div class="dlg-head">
+      <div><h2 id="dlgTitle">Review NCR</h2><p id="dlgSub"></p></div>
+      <button type="button" class="ghost" id="dlgX" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <div id="dlgNotice"></div>
+      <div class="grid" id="dlgGrid"></div>
+      <details class="raw" id="dlgRawWrap"><summary>Show text extracted from the document</summary><pre id="dlgRaw"></pre></details>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="danger" id="dlgDelete">Delete</button>
+      <div class="spacer"></div>
+      <button type="button" id="dlgSkip">Skip</button>
+      <button type="submit" class="primary" id="dlgSave">Add to register</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Paste dialog -->
+<dialog id="pasteDlg" aria-labelledby="pasteTitle">
+  <form method="dialog" class="dlg">
+    <div class="dlg-head"><div><h2 id="pasteTitle">Paste NCR text</h2><p>Paste the contents of an NCR (e.g. from an email) and the fields will be extracted.</p></div></div>
+    <div class="dlg-body"><textarea id="pasteText" rows="14" placeholder="NCR No: NCR-2026-001&#10;Supplier: …"></textarea></div>
+    <div class="dlg-foot"><button type="button" id="pasteCancel">Cancel</button><button type="submit" class="primary" id="pasteGo">Extract</button></div>
+  </form>
+</dialog>
+
+<!-- Confirm dialog -->
+<dialog id="confirmDlg" style="width:min(440px,calc(100vw - 32px))">
+  <form method="dialog" class="dlg">
+    <div class="dlg-body"><p id="confirmMsg" style="margin:4px 0"></p></div>
+    <div class="dlg-foot"><button value="no" type="submit">Cancel</button><button value="yes" type="submit" class="primary" id="confirmYes">OK</button></div>
+  </form>
+</dialog>
+
+<div class="toast-host" id="toasts" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+/* ------------------------------------------------------------------ *
+ *  Field definitions
+ * ------------------------------------------------------------------ */
+const FIELDS = [
+  { key: 'ncrNo',            label: 'NCR No.',              kind: 'short' },
+  { key: 'dateOpened',       label: 'Date Opened',          kind: 'date' },
+  { key: 'status',           label: 'Status',               kind: 'status' },
+  { key: 'vendor',           label: 'Vendor / Supplier',    kind: 'short' },
+  { key: 'partNo',           label: 'Part No.',             kind: 'short' },
+  { key: 'partDesc',         label: 'Part Description',     kind: 'short' },
+  { key: 'poNo',             label: 'PO No.',               kind: 'short' },
+  { key: 'lotNo',            label: 'Lot / Batch No.',      kind: 'short' },
+  { key: 'qty',              label: 'Qty Affected',         kind: 'short' },
+  { key: 'raisedBy',         label: 'Raised By',            kind: 'short' },
+  { key: 'disposition',      label: 'Disposition',          kind: 'disp' },
+  { key: 'dateClosed',       label: 'Date Closed',          kind: 'date' },
+  { key: 'reason',           label: 'NCR Reason / Description of Non-conformance', kind: 'long' },
+  { key: 'rootCause',        label: 'Root Cause',           kind: 'long' },
+  { key: 'correctiveAction', label: 'Corrective Action',    kind: 'long' },
+  { key: 'notes',            label: 'Notes',                kind: 'long', manual: true },
+];
+const FMAP = Object.fromEntries(FIELDS.map(f => [f.key, f]));
+const STATUSES = ['Open', 'In Progress', 'Closed', 'Cancelled'];
+const DISPOSITIONS = [
+  ['Use As Is',        /use[\s-]*as[\s-]*is|accept(?:ed)?[\s-]*as[\s-]*is/i],
+  ['Rework',           /\bre-?work/i],
+  ['Repair',           /\brepair/i],
+  ['Return to Vendor', /return(?:ed)?\s*to\s*(?:vendor|supplier|manufacturer)|\bRT[VS]\b/i],
+  ['Scrap',            /\bscrap/i],
+  ['Regrade',          /\bre-?grade/i],
+  ['Concession',       /concession|deviation|waiver/i],
+  ['Sort / Screen',    /\bsort(?:ing)?\b|100\s*%\s*inspect|\bscreen(?:ing)?\b/i],
+];
+
+/* ------------------------------------------------------------------ *
+ *  Label dictionary used by the extractor
+ *  pri: 3 = very specific, 2 = normal, 1 = generic fallback
+ *  strict: a single generic word, only accepted when followed by ":" or
+ *          sitting alone in its own table cell / line.
+ *  field null = a "stop" label: ends the previous value, captured nowhere.
+ * ------------------------------------------------------------------ */
+const NO = '(?:no\\.?|nr\\.?|number|num\\.?|#)';
+const SEP = '[ \\t\\-_/]*';
+const LABELS = [];
+function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&'); }
+function synToRe(s) {
+  return s.split('{no}')
+    .map(part => part.trim().split(/\s+/).filter(Boolean).map(escRe).join(SEP))
+    .join((s.trim().startsWith('{no}') ? '' : SEP) + NO);
+}
+function L(field, pri, syns, strict) {
+  for (const s of syns) {
+    const src = synToRe(s);
+    LABELS.push({
+      field, pri, strict: !!strict, src, len: s.replace('{no}', 'no').length,
+      multi: /\s|\{no\}/.test(s.trim()),
+      full: new RegExp('^(?:' + src + ')$', 'i'),
+      cell: new RegExp('^(?:' + src + ')\\s*[:#=\\-–—]?\\s*$', 'i'),
+    });
+  }
+}
+L('ncrNo', 3, ['ncr {no}', 'ncr ref', 'ncr reference', 'ncr id', 'non-conformance {no}', 'nonconformance {no}',
+  'non conformance {no}', 'non-conformance report {no}', 'nonconformance report {no}', 'non conformance report {no}',
+  'non-conformity {no}', 'nonconformity {no}', 'ncr report {no}']);
+L('ncrNo', 2, ['report {no}', 'reference {no}', 'ref {no}', 'document {no}']);
+L('ncrNo', 1, ['ncr'], true);
+
+L('dateOpened', 3, ['date opened', 'date raised', 'date issued', 'date of issue', 'issue date', 'raised date', 'open date',
+  'opened date', 'ncr date', 'date reported', 'report date', 'date detected', 'detection date', 'date found',
+  'date initiated', 'initiation date', 'date created', 'date of ncr', 'date identified', 'date of report']);
+L('dateOpened', 1, ['date'], true);
+
+L('vendor', 3, ['vendor name', 'supplier name', 'supplier / vendor', 'vendor / supplier', 'name of supplier', 'name of vendor']);
+L('vendor', 2, ['vendor', 'supplier', 'manufacturer', 'subcontractor', 'sub-contractor'], true);
+L('vendor', 1, ['company name', 'company'], true);
+
+L('partNo', 3, ['part {no}', 'item {no}', 'material {no}', 'product {no}', 'drawing {no}', 'part code', 'item code',
+  'product code', 'material code', 'part id', 'p/n', 'sku']);
+L('partDesc', 3, ['part description', 'part name', 'item description', 'product description', 'material description',
+  'product name', 'description of part', 'item name', 'material name']);
+L('partDesc', 1, ['component', 'product', 'material', 'item'], true);
+
+L('poNo', 3, ['po {no}', 'p.o. {no}', 'p.o {no}', 'purchase order {no}', 'order {no}', 'purchase order']);
+L('poNo', 1, ['po', 'p.o.'], true);
+
+L('lotNo', 3, ['lot {no}', 'batch {no}', 'lot / batch {no}', 'batch / lot {no}', 'heat {no}', 'serial {no}', 'lot code', 'batch code']);
+L('lotNo', 1, ['lot', 'batch'], true);
+
+L('qty', 3, ['quantity affected', 'qty affected', 'quantity rejected', 'qty rejected', 'nonconforming quantity',
+  'non-conforming quantity', 'quantity nonconforming', 'quantity non-conforming', 'qty nonconforming', 'qty non-conforming',
+  'reject qty', 'rejected qty', 'rejected quantity', 'defective qty', 'defective quantity', 'quantity defective',
+  'nc qty', 'qty nc', 'qty on hold', 'quantity on hold', 'suspect quantity', 'suspect qty']);
+L('qty', 1, ['quantity', 'qty'], true);
+L(null, 2, ['quantity received', 'qty received', 'quantity inspected', 'qty inspected', 'lot size', 'batch size',
+  'order quantity', 'order qty', 'quantity ordered', 'qty ordered', 'sample size']);
+
+L('raisedBy', 3, ['raised by', 'reported by', 'originator', 'initiated by', 'issued by', 'identified by', 'detected by',
+  'found by', 'prepared by', 'created by', 'submitted by', 'originated by', 'completed by', 'author']);
+L('raisedBy', 1, ['inspector'], true);
+
+L('reason', 3, ['description of non-conformance', 'description of nonconformance', 'description of non conformance',
+  'description of non-conformity', 'description of nonconformity', 'non-conformance description', 'nonconformance description',
+  'non conformance description', 'nonconformity description', 'non-conformity description', 'non-conformance details',
+  'nonconformance details', 'details of non-conformance', 'details of nonconformance', 'details of non-conformity',
+  'nature of non-conformance', 'nature of nonconformance', 'nature of non-conformity', 'defect description',
+  'description of defect', 'problem description', 'description of problem', 'issue description', 'description of issue',
+  'reason for ncr', 'ncr reason', 'reason for rejection', 'rejection reason', 'reason for non-conformance',
+  'reason for nonconformance', 'nonconformance detail', 'non-conformance detail', 'description of finding',
+  'finding description', 'defect details', 'details of defect', 'description of the non-conformance',
+  'description of the nonconformance', 'requirement / non-conformance', 'what is the problem']);
+L('reason', 2, ['reason', 'defect', 'complaint', 'finding', 'problem', 'issue'], true);
+L('reason', 1, ['description', 'details', 'non-conformance', 'nonconformance', 'non-conformity', 'nonconformity'], true);
+
+L('rootCause', 3, ['root cause analysis', 'root cause', 'cause of non-conformance', 'cause of nonconformance',
+  'cause of non-conformity', 'probable cause', 'cause of defect', 'cause analysis', 'why did it happen']);
+L('rootCause', 1, ['cause'], true);
+
+L('disposition', 3, ['disposition', 'mrb disposition', 'proposed disposition', 'recommended disposition',
+  'disposition decision', 'final disposition', 'disposition of material', 'disposition of product',
+  'disposition / action', 'action required', 'decision']);
+L(null, 3, ['disposition approved by', 'disposition by', 'disposition date', 'disposition authorised by',
+  'disposition authorized by', 'disposition signature']);
+
+L('correctiveAction', 3, ['corrective action', 'corrective actions', 'corrective action taken', 'corrective / preventive action',
+  'corrective and preventive action', 'corrective & preventive action', 'corrective action plan', 'action taken',
+  'actions taken', 'capa', 'corrective action required', 'corrective action / preventive action']);
+L('correctiveAction', 2, ['preventive action', 'preventative action', 'containment action', 'immediate action',
+  'containment', 'corrective measures']);
+L(null, 3, ['capa {no}', 'car {no}', 'scar {no}', 'corrective action {no}', 'corrective action due date',
+  'corrective action due', 'target date', 'due date', 'response due', 'response due date', 'verification of effectiveness',
+  'effectiveness check', 'verified by', 'approved by', 'approval', 'signature', 'signed', 'reviewed by', 'closed by',
+  'qa approval', 'quality approval', 'quality manager', 'qa manager', 'customer', 'customer name', 'page', 'department',
+  'location', 'area', 'contact', 'contact name', 'email', 'e-mail', 'phone', 'tel', 'telephone', 'address',
+  'vendor code', 'vendor {no}', 'vendor id', 'supplier code', 'supplier {no}', 'supplier id', 'supplier contact',
+  'vendor contact', 'specification', 'requirement', 'drawing rev', 'revision', 'rev', 'severity', 'category',
+  'classification', 'type of non-conformance', 'ncr type', 'cost', 'cost of non-conformance', 'attachments',
+  'date received', 'receipt date', 'delivery date', 'invoice {no}', 'delivery note', 'grn {no}', 'project', 'job {no}',
+  'work order {no}', 'wo {no}', 'operation', 'process', 'responsible', 'responsible person', 'assigned to', 'owner']);
+
+L('status', 3, ['ncr status', 'current status', 'status']);
+L('dateClosed', 3, ['date closed', 'closed date', 'close date', 'closure date', 'date of closure', 'closed on',
+  'date completed', 'completion date', 'close-out date', 'closeout date', 'ncr closed date', 'date closed out']);
+
+LABELS.sort((a, b) => b.len - a.len);
+const LABEL_RE_SRC = '(?:' + LABELS.map(l => l.src).join('|') + ')';
+
+function identifyLabel(s) { return LABELS.find(l => l.full.test(s.trim())); }
+function cellLabel(s) { return LABELS.find(l => l.cell.test(s.trim())); }
+
+/* ------------------------------------------------------------------ *
+ *  Date helpers
+ * ------------------------------------------------------------------ */
+const MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+let dateOrder = 'dmy';
+function pad(n) { return String(n).padStart(2, '0'); }
+function mkIso(y, m, d) {
+  if (y < 100) y += y < 70 ? 2000 : 1900;
+  if (m < 1 || m > 12 || d < 1 || d > 31) return '';
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  if (dt.getUTCMonth() !== m - 1) return '';
+  return `${y}-${pad(m)}-${pad(d)}`;
+}
+const DATE_TOKEN = /\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2}|\d{1,2}(?:st|nd|rd|th)?[-\/. ]+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?[-\/., ]+\d{2,4}|(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{2,4}|\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4}/gi;
+function parseDate(s) {
+  if (!s) return '';
+  s = String(s);
+  let m;
+  if ((m = s.match(/(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/))) return mkIso(+m[1], +m[2], +m[3]);
+  if ((m = s.match(/(\d{1,2})(?:st|nd|rd|th)?[-\/. ]+([a-z]{3,9})\.?[-\/., ]+(\d{2,4})/i)) && MONTHS[m[2].slice(0, 3).toLowerCase()])
+    return mkIso(+m[3], MONTHS[m[2].slice(0, 3).toLowerCase()], +m[1]);
+  if ((m = s.match(/([a-z]{3,9})\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{2,4})/i)) && MONTHS[m[1].slice(0, 3).toLowerCase()])
+    return mkIso(+m[3], MONTHS[m[1].slice(0, 3).toLowerCase()], +m[2]);
+  if ((m = s.match(/(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/))) {
+    const a = +m[1], b = +m[2], y = +m[3];
+    if (a > 12) return mkIso(y, b, a);
+    if (b > 12) return mkIso(y, a, b);
+    return dateOrder === 'mdy' ? mkIso(y, a, b) : mkIso(y, b, a);
+  }
+  return '';
+}
+function firstDateIn(text) {
+  for (const m of text.matchAll(DATE_TOKEN)) { const d = parseDate(m[0]); if (d) return d; }
+  return '';
+}
+function fmtDate(iso) {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${pad(d)} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m - 1]} ${y}`;
+}
+function todayIso() { const t = new Date(); return `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`; }
+function isoToSerial(iso) { const [y, m, d] = iso.split('-').map(Number); return (Date.UTC(y, m - 1, d) - Date.UTC(1899, 11, 30)) / 864e5; }
+function serialToIso(n) { const dt = new Date(Date.UTC(1899, 11, 30) + Math.round(n) * 864e5); return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`; }
+function daysOpen(r) {
+  if (!r.dateOpened) return null;
+  const end = r.dateClosed || todayIso();
+  return Math.max(0, Math.round((isoToSerial(end) - isoToSerial(r.dateOpened))));
+}
+
+/* ------------------------------------------------------------------ *
+ *  Extraction: text -> fields
+ * ------------------------------------------------------------------ */
+const CHECKED = '(?:☒|☑|✓|✔|✅|■|◼|●|◉|⦿|\\[\\s*[xX✓✔]\\s*\\]|\\(\\s*[xX✓✔]\\s*\\)|(?<![A-Za-z])[xX](?![A-Za-z]))';
+function checkedOptions(text) {
+  // Tick placed before the option ("☒ Scrap") is the usual layout; only if no
+  // option is ticked that way do we look for ticks placed after ("Scrap: ☒").
+  const before = DISPOSITIONS.filter(([, re]) => new RegExp(CHECKED + '[ \\t]*(?:' + re.source + ')', 'i').test(text));
+  if (before.length) return before.map(([n]) => n);
+  return DISPOSITIONS.filter(([, re]) => new RegExp('(?:' + re.source + ')[ \\t]*[:\\-]?[ \\t]*(?:☒|☑|✓|✔|✅|\\[\\s*[xX✓✔]\\s*\\]|\\(\\s*[xX✓✔]\\s*\\)|\\byes\\b)', 'i').test(text))
+    .map(([n]) => n);
+}
+function normaliseDisposition(seg, fullText) {
+  const segText = (seg || '').trim();
+  let picked = segText ? checkedOptions(segText) : [];
+  if (!picked.length && /[☐☒☑□■✓✔]|\[\s*[xX ]?\s*\]/.test(fullText)) picked = checkedOptions(fullText);
+  if (picked.length) return picked.join(', ');
+  if (!segText) return '';
+  const firstLine = segText.split('\n').map(s => s.trim()).find(Boolean) || '';
+  const mentioned = DISPOSITIONS.filter(([, re]) => re.test(firstLine)).map(([n]) => n);
+  if (mentioned.length === 1 && !/[☐□]/.test(firstLine)) return mentioned[0];
+  if (/[☐□]/.test(segText)) return ''; // unticked check-box list
+  return firstLine.replace(/\s{2,}/g, ' ').slice(0, 160);
+}
+function normaliseStatus(v, dateClosed) {
+  const s = (v || '').toLowerCase();
+  if (/cancel|void|withdrawn/.test(s)) return 'Cancelled';
+  if (/closed|complete|resolved/.test(s)) return 'Closed';
+  if (/progress|pending|awaiting|review|in work|ongoing/.test(s)) return 'In Progress';
+  if (/open|new|raised/.test(s)) return 'Open';
+  return dateClosed ? 'Closed' : 'Open';
+}
+function extractId(v) {
+  if (!v) return '';
+  const m = String(v).match(/[A-Z0-9][A-Z0-9\-\/_.]*\d[A-Z0-9\-\/_]*/i);
+  return m ? m[0].replace(/[.\-\/_]+$/, '') : '';
+}
+function splitCells(line) { return line.split(/\t| {3,}|\s\|\s?/).map(s => s.trim()).filter(Boolean); }
+
+function cleanValue(kind, raw) {
+  if (kind === 'long' || kind === 'disp') {
+    return raw.split('\n')
+      .map(l => l.replace(/\t+/g, '  ').replace(/[ ]{2,}/g, ' ').trim())
+      .filter(Boolean).join('\n').slice(0, 3000);
+  }
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  for (const line of lines.slice(0, 2)) {
+    const cell = splitCells(line)[0];
+    if (cell) return cell.replace(/^[:#=\-–—]\s*/, '').replace(/\s{2,}/g, ' ').trim();
+  }
+  return '';
+}
+
+function parseNcr(rawText, fileName) {
+  const text0 = String(rawText || '').replace(/\r\n?/g, '\n').replace(/[   ]/g, ' ').replace(/\f/g, '\n');
+  const found = {};
+  const offer = (field, val, pri) => {
+    if (!field || val == null) return;
+    const v = String(val).trim();
+    if (!v) return;
+    if (!found[field] || pri > found[field].pri) found[field] = { val: v, pri };
+  };
+
+  // Pass 1 — header-row tables: a row of labels followed by a row of values.
+  const lines = text0.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const cells = splitCells(lines[i]);
+    if (cells.length < 2) continue;
+    const labs = cells.map(cellLabel);
+    if (!labs.every(Boolean)) continue;
+    let j = i + 1;
+    while (j < lines.length && !lines[j].trim()) j++;
+    if (j >= lines.length) continue;
+    const vals = splitCells(lines[j]);
+    if (vals.length !== cells.length || vals.some(v => cellLabel(v))) continue;
+    const hasPart = labs.some(l => l.field === 'partNo');
+    labs.forEach((l, k) => {
+      let f = l.field;
+      if (f === 'reason' && l.pri === 1 && hasPart) f = 'partDesc';
+      if (f) offer(f, cleanValue(FMAP[f].kind, vals[k]), l.pri + 5);
+    });
+    lines[i] = ''; lines[j] = '';
+  }
+  const text = lines.join('\n');
+
+  // Pass 2 — "Label: value" / label cell followed by value cell(s).
+  const re = new RegExp(LABEL_RE_SRC, 'gi');
+  const hits = [];
+  let m;
+  while ((m = re.exec(text))) {
+    if (!m[0]) { re.lastIndex++; continue; }
+    const start = m.index, end = start + m[0].length;
+    const prev = text[start - 1] || '', next = text[end] || '';
+    const retry = () => { re.lastIndex = start + 1; };
+    if (/[a-z0-9]/i.test(prev) || (/[a-z0-9]/i.test(next) && /[a-z0-9]$/i.test(m[0]))) { retry(); continue; }
+    const entry = identifyLabel(m[0]);
+    if (!entry) { retry(); continue; }
+    const lineStart = text.lastIndexOf('\n', start - 1) + 1;
+    let lineEnd = text.indexOf('\n', end); if (lineEnd < 0) lineEnd = text.length;
+    const before = text.slice(lineStart, start);
+    const after = text.slice(end, lineEnd);
+    const punct = after.match(/^[ \t]*(?:[:=]|[\-–—](?=\s))[ \t]*/);
+    const cellStart = /(?:^|[\t|]| {2,}|[☐☒□])[ \t]*$/.test(before);
+    const cellAlone = /^[ \t]*(?:$|\t| {2,}|\|)/.test(after);
+    const ok = punct || (cellStart && cellAlone) || (!entry.strict && entry.multi && cellStart);
+    if (!ok) { retry(); continue; }
+    hits.push({ entry, start, valStart: end + (punct ? punct[0].length : 0) });
+    re.lastIndex = end;
+  }
+  hits.forEach((h, i) => {
+    const f = h.entry.field;
+    if (!f) return;
+    const raw = text.slice(h.valStart, i + 1 < hits.length ? hits[i + 1].start : text.length);
+    offer(f, cleanValue(FMAP[f].kind, raw), h.entry.pri);
+  });
+
+  // Post-process into a record.
+  const v = k => (found[k] ? found[k].val : '');
+  const rec = {};
+  rec.ncrNo = extractId(v('ncrNo'));
+  if (!rec.ncrNo) {
+    const fm = text0.match(/\bNC[RN][\s#:._\-]*(?:no\.?|number|num\.?|ref\.?)?[\s#:._\-]*[A-Z]{0,4}[\-\/]?\d[\w\-\/]*/i);
+    rec.ncrNo = extractId(fm && fm[0]);
+  }
+  if (!rec.ncrNo && fileName) {
+    const fm = fileName.match(/NC[RN][\s_\-#]*[\w\-]*\d[\w\-]*/i);
+    rec.ncrNo = extractId(fm && fm[0]);
+  }
+  rec.dateOpened = parseDate(v('dateOpened'));
+  let dateGuessed = false;
+  if (!rec.dateOpened) { rec.dateOpened = firstDateIn(text0); dateGuessed = !!rec.dateOpened; }
+  rec.dateClosed = parseDate(v('dateClosed'));
+  for (const k of ['vendor', 'partNo', 'partDesc', 'poNo', 'lotNo', 'qty', 'raisedBy', 'reason', 'rootCause', 'correctiveAction'])
+    rec[k] = v(k);
+  if (rec.partNo) rec.partNo = rec.partNo.slice(0, 80);
+  if (rec.poNo) rec.poNo = extractId(rec.poNo) || rec.poNo;
+  if (rec.qty) rec.qty = rec.qty.slice(0, 60);
+  rec.disposition = normaliseDisposition(v('disposition'), text0);
+  rec.status = normaliseStatus(v('status'), rec.dateClosed);
+  rec.notes = '';
+
+  const foundKeys = new Set(Object.keys(rec).filter(k => rec[k] && k !== 'status' && k !== 'notes'));
+  if (found.status) foundKeys.add('status');
+  if (dateGuessed) foundKeys.delete('dateOpened');
+  return { rec, foundKeys, dateGuessed, text: text0 };
+}
+
+/* ------------------------------------------------------------------ *
+ *  File readers: file -> text
+ * ------------------------------------------------------------------ */
+if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+function extOf(name) { const i = name.lastIndexOf('.'); return i < 0 ? '' : name.slice(i + 1).toLowerCase(); }
+async function extractText(file) {
+  const ext = extOf(file.name);
+  if (ext === 'pdf') return pdfText(file);
+  if (ext === 'docx') return docxText(file);
+  if (['xlsx', 'xlsm', 'xls', 'csv', 'ods'].includes(ext)) return sheetText(file);
+  if (['png', 'jpg', 'jpeg', 'webp', 'bmp', 'gif', 'tif', 'tiff'].includes(ext)) return ocr(file);
+  if (['txt', 'text', 'md', 'eml'].includes(ext) || (file.type || '').startsWith('text/')) return file.text();
+  if (ext === 'doc') throw new Error('old-style .doc files can’t be read in the browser — save it as .docx or PDF and upload again.');
+  throw new Error(`unsupported file type ".${ext}".`);
+}
+
+function layoutPdfItems(items) {
+  const its = items.filter(i => typeof i.str === 'string' && i.str.trim() !== '').map(i => ({
+    s: i.str, x: i.transform[4], y: i.transform[5], w: i.width,
+    h: Math.abs(i.transform[3]) || Math.abs(i.height) || 10,
+  }));
+  its.sort((a, b) => b.y - a.y || a.x - b.x);
+  const rows = [];
+  for (const it of its) {
+    let row = null;
+    for (let k = rows.length - 1; k >= 0 && k >= rows.length - 4; k--) {
+      if (Math.abs(rows[k].y - it.y) < Math.max(2, Math.min(rows[k].h, it.h) * 0.5)) { row = rows[k]; break; }
+    }
+    if (!row) { row = { y: it.y, h: it.h, items: [] }; rows.push(row); }
+    row.items.push(it);
+  }
+  rows.sort((a, b) => b.y - a.y);
+  return rows.map(r => {
+    r.items.sort((a, b) => a.x - b.x);
+    let out = '', end = null;
+    for (const it of r.items) {
+      if (end !== null) {
+        const gap = it.x - end;
+        if (gap > it.h * 0.9) out += '   ';
+        else if (gap > it.h * 0.1 && !/\s$/.test(out) && !/^\s/.test(it.s)) out += ' ';
+      }
+      out += it.s; end = it.x + it.w;
+    }
+    return out;
+  }).join('\n');
+}
+async function pdfText(file) {
+  if (!window.pdfjsLib) throw new Error('the PDF reader library failed to load (check your internet connection).');
+  const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  const pages = [];
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const page = await pdf.getPage(p);
+    pages.push(layoutPdfItems((await page.getTextContent()).items));
+  }
+  let text = pages.join('\n\n');
+  if (text.replace(/\s/g, '').length < 40) {
+    const out = [];
+    for (let p = 1; p <= pdf.numPages; p++) {
+      setStatus(`${file.name}: scanned PDF — reading page ${p} of ${pdf.numPages} with OCR…`);
+      const page = await pdf.getPage(p);
+      const vp = page.getViewport({ scale: 2 });
+      const canvas = document.createElement('canvas');
+      canvas.width = vp.width; canvas.height = vp.height;
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+      out.push(await ocr(canvas));
+    }
+    text = out.join('\n\n');
+  }
+  return text;
+}
+async function docxText(file) {
+  if (!window.mammoth) throw new Error('the Word reader library failed to load (check your internet connection).');
+  const { value: html } = await mammoth.convertToHtml({ arrayBuffer: await file.arrayBuffer() });
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const lines = [];
+  const cellText = td => {
+    const paras = [...td.querySelectorAll('p, li')].map(p => p.textContent.trim()).filter(Boolean);
+    return (paras.length ? paras.join('  ') : td.textContent.trim()) || '';
+  };
+  const walk = node => {
+    for (const el of node.children) {
+      if (el.tagName === 'TABLE') {
+        for (const tr of el.querySelectorAll('tr')) {
+          if (tr.closest('table') !== el) continue;
+          lines.push([...tr.children].map(cellText).join('\t'));
+        }
+        lines.push('');
+      } else if (/^(P|H[1-6]|LI)$/.test(el.tagName)) {
+        lines.push(el.textContent);
+      } else walk(el);
+    }
+  };
+  walk(doc.body);
+  return lines.join('\n');
+}
+async function sheetText(file) {
+  if (!window.XLSX) throw new Error('the Excel library failed to load (check your internet connection).');
+  const wb = XLSX.read(await file.arrayBuffer(), { type: 'array', cellNF: true });
+  return wb.SheetNames.map(n => {
+    const ws = wb.Sheets[n];
+    for (const addr in ws) {
+      if (addr[0] === '!') continue;
+      const c = ws[addr];
+      if (c.t === 'n' && c.z && XLSX.SSF.is_date(c.z)) c.w = serialToIso(c.v);
+      if (c.t === 'd' && c.v instanceof Date) c.w = c.v.toISOString().slice(0, 10);
+    }
+    return XLSX.utils.sheet_to_csv(ws, { FS: '\t', blankrows: false })
+      .split('\n').map(l => l.replace(/\t+$/, '')).join('\n');
+  }).join('\n\n');
+}
+
+let ocrWorker = null;
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = () => rej(new Error('could not load the OCR engine (needs internet access).'));
+    document.head.appendChild(s);
+  });
+}
+async function ocr(img) {
+  if (!ocrWorker) {
+    ocrWorker = (async () => {
+      if (!window.Tesseract) await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
+      return Tesseract.createWorker('eng');
+    })();
+    ocrWorker.catch(() => { ocrWorker = null; });
+  }
+  const w = await ocrWorker;
+  const { data } = await w.recognize(img);
+  return data.text || '';
+}
+
+/* ------------------------------------------------------------------ *
+ *  Storage
+ * ------------------------------------------------------------------ */
+const STORE_KEY = 'ncrRegister.v1';
+let records = [];
+function load() {
+  try { records = JSON.parse(localStorage.getItem(STORE_KEY) || '[]') || []; } catch { records = []; }
+  try { dateOrder = localStorage.getItem('ncrRegister.dateOrder') || 'dmy'; } catch {}
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(records)); }
+  catch { toast('Could not save in this browser — export to Excel to keep your data.', 'error'); }
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+/* ------------------------------------------------------------------ *
+ *  UI helpers
+ * ------------------------------------------------------------------ */
+const $ = id => document.getElementById(id);
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function toast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.textContent = msg;
+  $('toasts').appendChild(el);
+  setTimeout(() => el.remove(), type === 'error' ? 7000 : 3500);
+}
+function setStatus(msg) { $('statusText').textContent = msg; $('statusBar').classList.add('show'); }
+function clearStatus() { $('statusBar').classList.remove('show'); }
+function askConfirm(msg, okLabel = 'OK') {
+  return new Promise(res => {
+    const d = $('confirmDlg');
+    $('confirmMsg').textContent = msg;
+    $('confirmYes').textContent = okLabel;
+    d.returnValue = '';
+    d.addEventListener('close', () => res(d.returnValue === 'yes'), { once: true });
+    d.showModal();
+  });
+}
+
+/* ------------------------------------------------------------------ *
+ *  Register table
+ * ------------------------------------------------------------------ */
+const COLS = [
+  { key: 'ncrNo', label: 'NCR No.', cls: 'ncr' },
+  { key: 'dateOpened', label: 'Date Opened', cls: 'nowrap', fmt: fmtDate },
+  { key: 'vendor', label: 'Vendor' },
+  { key: 'partNo', label: 'Part No.', cls: 'nowrap' },
+  { key: 'reason', label: 'NCR Reason', clamp: true },
+  { key: 'disposition', label: 'Disposition', clamp: true },
+  { key: 'status', label: 'Status', pill: true },
+  { key: 'dateClosed', label: 'Date Closed', cls: 'nowrap', fmt: fmtDate },
+  { key: '_days', label: 'Days Open', cls: 'num' },
+];
+let sortKey = 'dateOpened', sortDir = -1;
+
+function cellVal(r, key) { return key === '_days' ? daysOpen(r) : r[key]; }
+function render() {
+  // head
+  $('headRow').innerHTML = COLS.map(c =>
+    `<th data-key="${c.key}" tabindex="0" aria-sort="${c.key === sortKey ? (sortDir > 0 ? 'ascending' : 'descending') : 'none'}">${esc(c.label)}</th>`
+  ).join('');
+
+  const q = $('search').value.trim().toLowerCase();
+  const sf = $('statusFilter').value;
+  let rows = records.filter(r => (!sf || r.status === sf) &&
+    (!q || FIELDS.some(f => String(r[f.key] || '').toLowerCase().includes(q))));
+  rows.sort((a, b) => {
+    let x = cellVal(a, sortKey), y = cellVal(b, sortKey);
+    const ex = x === '' || x == null, ey = y === '' || y == null;
+    if (ex && ey) return 0; if (ex) return 1; if (ey) return -1;
+    if (typeof x === 'number' && typeof y === 'number') return (x - y) * sortDir;
+    return String(x).localeCompare(String(y), undefined, { numeric: true, sensitivity: 'base' }) * sortDir;
+  });
+
+  $('body').innerHTML = rows.map(r => '<tr data-id="' + esc(r.id) + '" tabindex="0">' + COLS.map(c => {
+    let v = cellVal(r, c.key);
+    let html;
+    if (c.key === '_days') {
+      html = v == null ? '' : (r.status !== 'Closed' && r.status !== 'Cancelled' && v > 30 ? `<span class="late" title="Open more than 30 days">${v}</span>` : String(v));
+    } else if (c.pill) {
+      html = v ? `<span class="pill ${esc(String(v).replace(/\s+/g, '-'))}">${esc(v)}</span>` : '';
+    } else {
+      v = c.fmt ? c.fmt(v) : v;
+      html = c.clamp ? `<div class="clamp" title="${esc(v)}">${esc(v)}</div>` : esc(v);
+    }
+    return `<td class="${c.cls || ''}">${html}</td>`;
+  }).join('') + '</tr>').join('');
+
+  $('empty').hidden = records.length > 0;
+  $('empty').textContent = records.length ? '' : 'No NCRs yet — upload a document above to get started.';
+  if (records.length && !rows.length) { $('empty').hidden = false; $('empty').textContent = 'No NCRs match your search.'; }
+
+  // tiles
+  const open = records.filter(r => r.status === 'Open' || r.status === 'In Progress');
+  const late = open.filter(r => (daysOpen(r) || 0) > 30);
+  const closed = records.filter(r => r.status === 'Closed');
+  const closedDays = closed.map(daysOpen).filter(d => d != null);
+  const avg = closedDays.length ? Math.round(closedDays.reduce((a, b) => a + b, 0) / closedDays.length) : '–';
+  $('tiles').innerHTML = [
+    ['Total NCRs', records.length], ['Open', open.length], ['Open > 30 days', late.length],
+    ['Closed', closed.length], ['Avg days to close', avg],
+  ].map(([k, v]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+}
+
+/* ------------------------------------------------------------------ *
+ *  Review / edit dialog
+ * ------------------------------------------------------------------ */
+let dlgState = null; // { mode: 'review'|'edit'|'new', rec, onDone }
+
+function buildForm(rec, foundKeys, showTags) {
+  $('dlgGrid').innerHTML = FIELDS.map(f => {
+    const val = rec[f.key] || '';
+    const id = 'f_' + f.key;
+    let input;
+    if (f.kind === 'long') input = `<textarea id="${id}" name="${f.key}" rows="3">${esc(val)}</textarea>`;
+    else if (f.kind === 'date') input = `<input type="date" id="${id}" name="${f.key}" value="${esc(val)}">`;
+    else if (f.kind === 'status') input = `<select id="${id}" name="${f.key}">${STATUSES.map(s => `<option${s === (val || 'Open') ? ' selected' : ''}>${s}</option>`).join('')}</select>`;
+    else if (f.kind === 'disp') input = `<input id="${id}" name="${f.key}" list="dispList" value="${esc(val)}" autocomplete="off">`;
+    else input = `<input id="${id}" name="${f.key}" value="${esc(val)}" autocomplete="off">`;
+    let tag = '', missing = false;
+    if (showTags && !f.manual && f.kind !== 'status') {
+      if (foundKeys.has(f.key)) tag = '<span class="tag found">✓ found</span>';
+      else if (f.key === 'dateOpened' && val) tag = '<span class="tag missing">guessed</span>';
+      else if (f.key !== 'dateClosed') { tag = '<span class="tag missing">not found</span>'; missing = !val; }
+    }
+    const full = f.kind === 'long' ? ' full' : '';
+    return `<div class="field${full}${missing ? ' missing' : ''}"><label for="${id}"><span>${esc(f.label)}</span>${tag}</label>${input}</div>`;
+  }).join('') + `<datalist id="dispList">${DISPOSITIONS.map(([n]) => `<option value="${n}">`).join('')}</datalist>`;
+  $('f_ncrNo').addEventListener('input', updateDupNotice);
+  $('f_dateClosed').addEventListener('change', () => {
+    if ($('f_dateClosed').value && $('f_status').value !== 'Cancelled') $('f_status').value = 'Closed';
+  });
+}
+function readForm() {
+  const out = {};
+  for (const f of FIELDS) out[f.key] = ($('f_' + f.key).value || '').trim();
+  return out;
+}
+function findDup(ncrNo, exceptId) {
+  const n = (ncrNo || '').trim().toLowerCase();
+  return n ? records.find(r => r.id !== exceptId && (r.ncrNo || '').trim().toLowerCase() === n) : null;
+}
+function updateDupNotice() {
+  if (!dlgState) return;
+  const dup = findDup($('f_ncrNo').value, dlgState.rec.id);
+  const base = dlgState.notice || '';
+  $('dlgNotice').innerHTML = base + (dup ? `<div class="notice warn">An entry for <strong>${esc(dup.ncrNo)}</strong> already exists in the register. Saving will <strong>update that entry</strong> instead of adding a duplicate.</div>` : '');
+  if (dlgState.mode !== 'edit') $('dlgSave').textContent = dup ? 'Update existing entry' : 'Add to register';
+}
+
+function openDialog(state) {
+  dlgState = state;
+  const { mode, rec } = state;
+  $('dlgTitle').textContent = mode === 'edit' ? `NCR ${rec.ncrNo || '(no number)'}` : mode === 'new' ? 'Add NCR manually' : 'Review extracted details';
+  $('dlgSub').textContent = state.sub || (rec.sourceFile ? 'Source: ' + rec.sourceFile : '');
+  buildForm(rec, state.foundKeys || new Set(), mode === 'review');
+  $('dlgRaw').textContent = state.text || '';
+  $('dlgRawWrap').hidden = !state.text;
+  $('dlgRawWrap').open = false;
+  $('dlgDelete').hidden = mode !== 'edit';
+  $('dlgSkip').textContent = mode === 'review' ? 'Skip this file' : 'Cancel';
+  $('dlgSave').textContent = mode === 'edit' ? 'Save changes' : 'Add to register';
+  updateDupNotice();
+  $('dlg').showModal();
+  setTimeout(() => { const el = $('dlgForm').querySelector('.field.missing input, .field.missing textarea') || $('f_ncrNo'); el && el.focus(); }, 30);
+}
+function closeDialog(result) {
+  const st = dlgState; dlgState = null;
+  if ($('dlg').open) $('dlg').close();
+  if (st && st.onDone) st.onDone(result);
+}
+
+$('dlgForm').addEventListener('submit', e => {
+  e.preventDefault();
+  if (!dlgState) return;
+  const data = readForm();
+  if (!data.ncrNo && !data.vendor && !data.reason) { toast('Enter at least an NCR number, vendor or reason.', 'error'); return; }
+  const st = dlgState;
+  const dup = findDup(data.ncrNo, st.rec.id);
+  if (st.mode === 'edit') {
+    const idx = records.findIndex(r => r.id === st.rec.id);
+    if (dup) { // merged into another entry with that number
+      Object.assign(dup, data, { updatedOn: todayIso() });
+      records.splice(idx, 1);
+    } else Object.assign(records[idx], data, { updatedOn: todayIso() });
+    toast('Changes saved.');
+  } else if (dup) {
+    Object.assign(dup, data, { sourceFile: st.rec.sourceFile || dup.sourceFile, updatedOn: todayIso() });
+    toast(`Updated ${dup.ncrNo}.`);
+  } else {
+    records.push({ id: uid(), ...data, sourceFile: st.rec.sourceFile || '', addedOn: todayIso() });
+    toast(`Added ${data.ncrNo || 'NCR'} to the register.`);
+  }
+  save(); render();
+  closeDialog('saved');
+});
+$('dlgSkip').addEventListener('click', () => closeDialog('skipped'));
+$('dlgX').addEventListener('click', () => closeDialog('skipped'));
+$('dlg').addEventListener('cancel', e => { e.preventDefault(); closeDialog('skipped'); });
+$('dlgDelete').addEventListener('click', async () => {
+  const st = dlgState;
+  if (!st) return;
+  $('dlg').close();
+  if (await askConfirm(`Delete ${st.rec.ncrNo || 'this NCR'} from the register?`, 'Delete')) {
+    records = records.filter(r => r.id !== st.rec.id);
+    save(); render(); toast('NCR deleted.');
+    dlgState = null;
+  } else { $('dlg').showModal(); }
+});
+
+/* ------------------------------------------------------------------ *
+ *  Upload queue
+ * ------------------------------------------------------------------ */
+const queue = [];
+let busy = false;
+function enqueue(files) {
+  for (const f of files) queue.push(f);
+  if (!busy) next();
+}
+async function next() {
+  if (!queue.length) { busy = false; clearStatus(); return; }
+  busy = true;
+  const f = queue.shift();
+  setStatus(`Reading ${f.name}…`);
+  let text;
+  try { text = await extractText(f); }
+  catch (err) { console.error(err); toast(`${f.name}: ${err.message || err}`, 'error'); return next(); }
+  clearStatus();
+  const res = parseNcr(text, f.name);
+  res.rec.sourceFile = f.name;
+  const n = res.foundKeys.size;
+  let notice = '';
+  if (!text.trim()) notice = '<div class="notice warn">No readable text was found in this file. Fill in the details manually or skip it.</div>';
+  else if (n < 3) notice = '<div class="notice warn">Only a few fields could be recognised in this document. Check the extracted text below and fill in the rest.</div>';
+  else notice = `<div class="notice info">${n} fields were read from the document. Check them, fill any gaps, then add to the register.</div>`;
+  openDialog({
+    mode: 'review', rec: res.rec, foundKeys: res.foundKeys, text, notice,
+    sub: f.name + (queue.length ? ` · ${queue.length} more file${queue.length > 1 ? 's' : ''} waiting` : ''),
+    onDone: () => next(),
+  });
+}
+
+const drop = $('drop'), fileInput = $('fileInput');
+drop.addEventListener('click', () => fileInput.click());
+drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+fileInput.addEventListener('change', () => { enqueue([...fileInput.files]); fileInput.value = ''; });
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files.length) enqueue([...e.dataTransfer.files]); });
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', e => e.preventDefault());
+
+/* ------------------------------------------------------------------ *
+ *  Paste / manual
+ * ------------------------------------------------------------------ */
+$('btnPaste').addEventListener('click', () => { $('pasteText').value = ''; $('pasteDlg').showModal(); $('pasteText').focus(); });
+$('pasteCancel').addEventListener('click', () => $('pasteDlg').close());
+$('pasteDlg').querySelector('form').addEventListener('submit', e => {
+  e.preventDefault();
+  const text = $('pasteText').value;
+  if (!text.trim()) { toast('Paste some NCR text first.', 'error'); return; }
+  $('pasteDlg').close();
+  const res = parseNcr(text, '');
+  res.rec.sourceFile = 'Pasted text';
+  openDialog({ mode: 'review', rec: res.rec, foundKeys: res.foundKeys, text, sub: 'From pasted text',
+    notice: `<div class="notice info">${res.foundKeys.size} fields were recognised. Check them before adding.</div>` });
+});
+$('btnManual').addEventListener('click', () => openDialog({ mode: 'new', rec: { status: 'Open', dateOpened: todayIso(), sourceFile: 'Manual entry' } }));
+
+/* ------------------------------------------------------------------ *
+ *  Table interactions
+ * ------------------------------------------------------------------ */
+$('headRow').addEventListener('click', e => {
+  const th = e.target.closest('th'); if (!th) return;
+  const k = th.dataset.key;
+  if (k === sortKey) sortDir = -sortDir; else { sortKey = k; sortDir = (k === 'dateOpened' || k === '_days' || k === 'dateClosed') ? -1 : 1; }
+  render();
+});
+$('headRow').addEventListener('keydown', e => { if (e.key === 'Enter') e.target.click(); });
+function openRow(tr) {
+  const r = records.find(x => x.id === tr.dataset.id); if (!r) return;
+  openDialog({ mode: 'edit', rec: r });
+}
+$('body').addEventListener('click', e => { const tr = e.target.closest('tr'); if (tr) openRow(tr); });
+$('body').addEventListener('keydown', e => { if (e.key === 'Enter') { const tr = e.target.closest('tr'); if (tr) openRow(tr); } });
+$('search').addEventListener('input', render);
+$('statusFilter').addEventListener('change', render);
+$('dateOrder').addEventListener('change', () => {
+  dateOrder = $('dateOrder').value;
+  try { localStorage.setItem('ncrRegister.dateOrder', dateOrder); } catch {}
+});
+$('btnClear').addEventListener('click', async () => {
+  if (!records.length) return;
+  if (await askConfirm(`Remove all ${records.length} NCRs from this register? Export to Excel first if you want a copy.`, 'Clear register')) {
+    records = []; save(); render(); toast('Register cleared.');
+  }
+});
+
+/* ------------------------------------------------------------------ *
+ *  Excel export / import
+ * ------------------------------------------------------------------ */
+const EXPORT_COLS = [
+  ...FIELDS.map(f => ({ key: f.key, label: f.key === 'reason' ? 'NCR Reason' : f.label, date: f.kind === 'date' })),
+  { key: '_days', label: 'Days Open' },
+  { key: 'sourceFile', label: 'Source File' },
+  { key: 'addedOn', label: 'Added On', date: true },
+];
+const COL_WIDTHS = { ncrNo: 16, dateOpened: 13, status: 12, vendor: 26, partNo: 16, partDesc: 28, poNo: 14, lotNo: 14, qty: 12,
+  raisedBy: 18, disposition: 20, dateClosed: 13, reason: 60, rootCause: 45, correctiveAction: 45, notes: 30, _days: 10, sourceFile: 30, addedOn: 12 };
+
+$('btnExport').addEventListener('click', () => {
+  if (!window.XLSX) { toast('The Excel library failed to load — check your internet connection.', 'error'); return; }
+  if (!records.length) { toast('The register is empty — nothing to export yet.', 'error'); return; }
+  const sorted = [...records].sort((a, b) => String(a.ncrNo || '').localeCompare(String(b.ncrNo || ''), undefined, { numeric: true }));
+  const aoa = [EXPORT_COLS.map(c => c.label)];
+  for (const r of sorted) aoa.push(EXPORT_COLS.map(c => {
+    const v = c.key === '_days' ? daysOpen(r) : r[c.key];
+    if (c.date) return v ? isoToSerial(v) : '';
+    return v == null ? '' : v;
+  }));
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  EXPORT_COLS.forEach((c, ci) => {
+    if (!c.date) return;
+    for (let ri = 1; ri < aoa.length; ri++) {
+      const cell = ws[XLSX.utils.encode_cell({ r: ri, c: ci })];
+      if (cell && cell.t === 'n') cell.z = 'dd-mmm-yyyy';
+    }
+  });
+  ws['!cols'] = EXPORT_COLS.map(c => ({ wch: COL_WIDTHS[c.key] || 14 }));
+  ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: aoa.length - 1, c: EXPORT_COLS.length - 1 } }) };
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'NCR Register');
+  XLSX.writeFile(wb, `NCR_Register_${todayIso()}.xlsx`);
+  toast(`Exported ${records.length} NCR${records.length > 1 ? 's' : ''} to Excel.`);
+});
+
+$('btnImport').addEventListener('click', () => $('importInput').click());
+$('importInput').addEventListener('change', async () => {
+  const file = $('importInput').files[0]; $('importInput').value = '';
+  if (!file) return;
+  try {
+    const wb = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { defval: '', raw: true });
+    const norm = s => String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const map = {};
+    for (const c of EXPORT_COLS) map[norm(c.label)] = c;
+    for (const f of FIELDS) map[norm(f.label)] = { key: f.key, date: f.kind === 'date' };
+    Object.assign(map, { ncrnumber: map.ncrno, vendor: map.vendorsupplier, supplier: map.vendorsupplier, reason: map.ncrreason, description: map.ncrreason });
+    let added = 0, updated = 0;
+    for (const row of rows) {
+      const rec = {};
+      for (const [h, val] of Object.entries(row)) {
+        const c = map[norm(h)];
+        if (!c || c.key === '_days') continue;
+        if (c.date) rec[c.key] = typeof val === 'number' ? serialToIso(val) : parseDate(val);
+        else rec[c.key] = String(val).trim();
+      }
+      if (!rec.ncrNo && !rec.vendor && !rec.reason) continue;
+      rec.status = STATUSES.includes(rec.status) ? rec.status : normaliseStatus(rec.status, rec.dateClosed);
+      const dup = findDup(rec.ncrNo, null);
+      if (dup) { Object.assign(dup, rec); updated++; }
+      else { records.push({ id: uid(), addedOn: todayIso(), sourceFile: file.name, ...rec }); added++; }
+    }
+    if (!added && !updated) { toast('No register rows were recognised in that file. To read a single NCR document, use the upload area instead.', 'error'); return; }
+    save(); render();
+    toast(`Imported ${added} new and updated ${updated} existing NCR${added + updated === 1 ? '' : 's'}.`);
+  } catch (err) { console.error(err); toast('Could not import that file: ' + (err.message || err), 'error'); }
+});
+
+/* ------------------------------------------------------------------ */
+load();
+$('dateOrder').value = dateOrder;
+render();
+window.NCR = { parseNcr, records: () => records }; // handy for debugging in the console
+</script>
+</body>
+</html>
