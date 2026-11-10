@@ -646,7 +646,13 @@ function parseNcr(rawText, fileName) {
 /* ------------------------------------------------------------------ *
  *  File readers: file -> text
  * ------------------------------------------------------------------ */
-if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+if (window.pdfjsLib) {
+  // The standalone build embeds the PDF worker in the page so it runs offline.
+  const inlineWorker = document.getElementById('pdfjs-worker');
+  pdfjsLib.GlobalWorkerOptions.workerSrc = inlineWorker
+    ? URL.createObjectURL(new Blob([inlineWorker.textContent], { type: 'text/javascript' }))
+    : 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
 
 function extOf(name) { const i = name.lastIndexOf('.'); return i < 0 ? '' : name.slice(i + 1).toLowerCase(); }
 async function extractText(file) {
